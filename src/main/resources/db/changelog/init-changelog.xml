@@ -57,12 +57,12 @@
             <column name="deleted" type="BOOLEAN"/>
         </createTable>
 
-        <createTable tableName="user">
+        <createTable tableName="users">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints
                     nullable="false"
                     primaryKey="true"
-                    primaryKeyName="pk_user"/>
+                    primaryKeyName="pk_users"/>
             </column>
             <column name="created_at" type="DATETIME"/>
             <column name="username" type="VARCHAR(64)"/>
@@ -126,7 +126,7 @@
                                  baseTableName="gift"
                                  constraintName="fk_gift_on_reserver_user"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"
+                                 referencedTableName="users"
                                  onDelete="SET NULL"/>
 
         <addForeignKeyConstraint baseColumnNames="wishlist_id"
@@ -140,14 +140,14 @@
                                  baseTableName="santa_group"
                                  constraintName="fk_santa_group_on_owner"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"
+                                 referencedTableName="users"
                                  onDelete="CASCADE"/>
 
         <addForeignKeyConstraint baseColumnNames="giver_user_id"
                                  baseTableName="santa_pair"
                                  constraintName="fk_santa_pair_on_giver_user"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"
+                                 referencedTableName="users"
                                  onDelete="SET NULL"/>
 
         <addForeignKeyConstraint baseColumnNames="santa_group_id"
@@ -161,14 +161,14 @@
                                  baseTableName="santa_pair"
                                  constraintName="fk_santa_pair_on_taker_user"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"
+                                 referencedTableName="users"
                                  onDelete="SET NULL"/>
 
         <addForeignKeyConstraint baseColumnNames="owner_user_id"
                                  baseTableName="wishlist"
                                  constraintName="fk_wishlist_on_owner_user"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"
+                                 referencedTableName="users"
                                  onDelete="CASCADE"/>
 
         <addForeignKeyConstraint baseColumnNames="santa_group_id"
@@ -182,14 +182,14 @@
                                  baseTableName="users_santa_groups"
                                  constraintName="fk_usesangro_on_user"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"
+                                 referencedTableName="users"
                                  onDelete="CASCADE"/>
 
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="users_wishlists"
                                  constraintName="fk_usewis_on_user"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"
+                                 referencedTableName="users"
                                  onDelete="CASCADE"/>
 
         <addForeignKeyConstraint baseColumnNames="wishlist_id"
