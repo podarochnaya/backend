@@ -1,0 +1,980 @@
+openapi: 3.1.0
+info:
+  title: Podarochnaya app
+  description: ''
+  version: 1.0.0
+
+servers:
+  - url: http://127.0.0.1:8080/
+
+paths:
+  ### Auth
+  /auth/sign-up:
+    post:
+      summary: Sign up a new user
+      description: Register a new user with the provided details
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserСreateRequest'
+      responses:
+        '200':
+          description: User signed up successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Confirmation message
+
+  /auth/sign-in:
+    post:
+      summary: Sign in an existing user
+      description: Authenticate a user with the provided credentials
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+      responses:
+        '200':
+          description: User signed in successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Authentication token
+
+  ### Users
+  /api/v1/users/{userId}:
+    get:
+      summary: Get User by ID
+      description: Retrieve a user by their unique ID
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The unique identifier of the user
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+    #/api/v1/users/{userId}:
+    put:
+      summary: Update User by ID
+      description: Update an existing user's details by their unique ID
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The unique identifier of the user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+
+    #/api/v1/users/{userId}:
+    delete:
+      summary: Delete User by ID
+      description: Delete a user by their unique ID
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The unique identifier of the user
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                    description: ID of the deleted user
+        '404':
+          description: User not found
+
+  /api/v1/users:
+    get:
+      summary: List All Users
+      description: Retrieve a list of all users
+      tags:
+        - User
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  ### Wishlists
+  /api/v1/wishlists:
+    post:
+      summary: Create a new wishlist
+      description: Creates a new wishlist with the specified details
+      tags:
+        - Wishlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WishlistCreateRequest'
+      responses:
+        '200':
+          description: Wishlist created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wishlist'
+
+    #/api/v1/wishlists:
+    get:
+      summary: List All Wishlists
+      description: Retrieve a list of all wishlists
+      tags:
+        - Wishlist
+      responses:
+        '200':
+          description: A list of wishlists
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Wishlist'
+
+  /api/v1/wishlists/{wishlistId}:
+    get:
+      summary: Get Wishlist by ID
+      description: Retrieve a wishlist by its ID
+      tags:
+        - Wishlist
+      parameters:
+        - in: path
+          name: wishlistId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The unique identifier
+      responses:
+        '200':
+          description: Wishlist retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wishlist'
+
+    #/api/v1/wishlists/{wishlistId}:
+    put:
+      summary: Update Wishlist
+      description: Update an existing wishlist by ID
+      tags:
+        - Wishlist
+      parameters:
+        - in: path
+          name: wishlistId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The unique identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WishlistUpdateRequest'
+      responses:
+        '200':
+          description: Wishlist updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wishlist'
+
+    #/api/v1/wishlists/{wishlistId}:
+    delete:
+      summary: Delete Wishlist
+      description: Delete a wishlist by its ID
+      tags:
+        - Wishlist
+      parameters:
+        - in: path
+          name: wishlistId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The unique identifier
+      responses:
+        '200':
+          description: Wishlist deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+
+  ### Gifts
+  /api/v1/gifts:
+    post:
+      summary: Create a new gift
+      description: Creates a new gift with specified details
+      tags:
+        - Gift
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GiftCreateRequest'
+      responses:
+        '200':
+          description: Gift created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gift'
+    #/api/v1/gifts:
+    get:
+      summary: List all gifts
+      description: Retrieve a list of all gifts
+      tags:
+        - Gift
+      responses:
+        '200':
+          description: A list of gifts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Gift'
+
+  /api/v1/gifts/{giftId}:
+    get:
+      summary: Get gift by ID
+      description: Retrieve a gift by its ID
+      tags:
+        - Gift
+      parameters:
+        - in: path
+          name: giftId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier
+      responses:
+        '200':
+          description: Gift retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gift'
+    #/api/v1/gifts/{giftId}:
+    put:
+      summary: Update gift
+      description: Update an existing gift by ID
+      tags:
+        - Gift
+      parameters:
+        - in: path
+          name: giftId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GiftUpdateRequest'
+      responses:
+        '200':
+          description: Gift updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gift'
+
+    #/api/v1/gifts/{giftId}:
+    delete:
+      summary: Delete gift
+      description: Delete a gift by its ID
+      tags:
+        - Gift
+      parameters:
+        - in: path
+          name: giftId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier
+      responses:
+        '200':
+          description: Gift deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+
+  ###Santa-pairs.
+  /api/v1/santa-pairs:
+    post:
+      summary: Create a new Santa pair
+      description: Creates a new Santa pair with specified details
+      tags:
+        - SantaPair
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SantaPairCreateRequest'
+      responses:
+        '200':
+          description: Santa pair created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SantaPair'
+
+    #/api/v1/santa-pairs:
+    get:
+      summary: List all Santa pairs
+      description: Retrieve a list of all Santa pairs
+      tags:
+        - SantaPair
+      responses:
+        '200':
+          description: A list of Santa pairs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SantaPair'
+
+  /api/v1/santa-pairs/{pairId}:
+    get:
+      summary: Get Santa pair by ID
+      description: Retrieve a Santa pair by its ID
+      tags:
+        - SantaPair
+      parameters:
+        - in: path
+          name: pairId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier
+      responses:
+        '200':
+          description: Santa pair retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SantaPair'
+
+    #/api/v1/santa-pairs/{pairId}:
+    put:
+      summary: Update Santa pair
+      description: Update an existing Santa pair by ID
+      tags:
+        - SantaPair
+      parameters:
+        - in: path
+          name: pairId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SantaPairUpdateRequest'
+      responses:
+        '200':
+          description: Santa pair updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SantaPair'
+
+    #/api/v1/santa-pairs/{pairId}:
+    delete:
+      summary: Delete Santa pair
+      description: Delete a Santa pair by its ID
+      tags:
+        - SantaPair
+      parameters:
+        - in: path
+          name: pairId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier
+      responses:
+        '200':
+          description: Santa pair deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+
+  ###Santa groups
+  /api/v1/santa-groups:
+    post:
+      summary: Create a new Santa group
+      description: Creates a new Santa group with specified details
+      tags:
+        - SantaGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SantaGroupCreateRequest'
+      responses:
+        '200':
+          description: Santa group created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SantaGroup'
+
+    #/api/v1/santa-groups:
+    get:
+      summary: List all Santa groups
+      description: Retrieve a list of all Santa groups
+      tags:
+        - SantaGroup
+      responses:
+        '200':
+          description: A list of Santa groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SantaGroup'
+
+  /api/v1/santa-groups/{groupId}:
+    get:
+      summary: Get Santa group by ID
+      description: Retrieve a Santa group by its ID
+      tags:
+        - SantaGroup
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier
+      responses:
+        '200':
+          description: Santa group retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SantaGroup'
+
+    #/api/v1/santa-groups/{groupId}:
+    put:
+      summary: Update Santa group
+      description: Update an existing Santa group by ID
+      tags:
+        - SantaGroup
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SantaGroupUpdateRequest'
+      responses:
+        '200':
+          description: Santa group updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SantaGroup'
+
+    #/api/v1/santa-groups/{groupId}:
+    delete:
+      summary: Delete Santa group
+      description: Delete a Santa group by its ID
+      tags:
+        - SantaGroup
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier
+      responses:
+        '200':
+          description: Santa group deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+
+components:
+  schemas:
+    GiftCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the gift
+        description:
+          type: string
+          description: Detailed description
+        url:
+          type: string
+          description: URL to view or purchase the gift
+        price:
+          type: number
+          format: double
+          description: Price of the gift
+        reserved:
+          type: boolean
+          description: Reservation status
+        photoId:
+          type: string
+          description: Photo identifier
+        wishlistId:
+          type: integer
+          format: int64
+          description: ID of the associated wishlist
+        reserverUserId:
+          type: integer
+          format: int64
+          description: ID of the user who reserved the gift
+        status:
+          type: integer
+          description: Status of the gift
+
+    GiftUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Updated title
+        description:
+          type: string
+          description: Updated description
+        url:
+          type: string
+          description: Updated URL
+        price:
+          type: number
+          format: double
+          description: Updated price
+        reserved:
+          type: boolean
+          description: Updated reservation status
+        photoId:
+          type: string
+          description: Updated photo identifier
+        status:
+          type: integer
+          description: Updated status
+
+    GiftRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID
+        title:
+          type: string
+          description: Title
+
+    Gift:
+      allOf:
+        - $ref: '#/components/schemas/GiftRef'
+        - type: object
+          properties:
+            description:
+              type: string
+              description: Detailed description
+            url:
+              type: string
+              description: URL to view or purchase the gift
+            price:
+              type: number
+              format: double
+              description: Price of the gift
+            reserved:
+              type: boolean
+              description: Reservation status
+            photoId:
+              type: string
+              description: Photo identifier
+            wishlist:
+              $ref: '#/components/schemas/WishlistRef'
+            reserver:
+              $ref: '#/components/schemas/UserRef'
+            status:
+              type: integer
+              description: Status of the gift
+            createdAt:
+              type: string
+              format: date-time
+              description: Creation timestamp
+
+    WishlistCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title
+        description:
+          type: string
+          description: A description
+        status:
+          type: string
+          description: The status (from enum)
+        ownerUserId:
+          type: integer
+          format: int64
+          description: The ID of the owner user
+        visibility:
+          type: string
+          description: The visibility (from enum)
+
+    WishlistUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The updated title
+        description:
+          type: string
+          description: Updated description
+        status:
+          type: integer
+          description: The updated status
+        visibility:
+          type: integer
+          description: The updated visibility
+
+    WishlistRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID
+        title:
+          type: string
+          description: Title
+
+    Wishlist:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/WishlistRef'
+        - type: object
+          properties:
+            description:
+              type: string
+              description: A description
+            status:
+              type: string
+              description: The status
+            owner:
+              $ref: '#/components/schemas/UserRef'
+            visibility:
+              type: string
+              description: The visibility
+            gifts:
+              type: array
+              items:
+                $ref: '#/components/schemas/GiftRef'
+            createdAt:
+              type: string
+              format: date-time
+              description: Timestamp
+
+    SantaPairCreateRequest:
+      type: object
+      properties:
+        giverUserId:
+          type: integer
+          format: int64
+          description: ID of the giver user
+        takerUserId:
+          type: integer
+          format: int64
+          description: ID of the taker user
+        santaGroupId:
+          type: integer
+          format: int64
+          description: ID of the associated Santa group
+
+    SantaPairUpdateRequest:
+      type: object
+      properties:
+        deleted:
+          type: boolean
+          description: Updated deletion status
+
+    SantaPairRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID of the Santa pair
+        giver:
+          $ref: '#/components/schemas/UserRef'
+        taker:
+          $ref: '#/components/schemas/UserRef'
+
+    SantaPair:
+      allOf:
+        - $ref: '#/components/schemas/SantaPairRef'
+        - type: object
+          properties:
+            santaGroup:
+              $ref: '#/components/schemas/SantaGroupRef'
+            deleted:
+              type: boolean
+              description: Deletion status
+            createdAt:
+              type: string
+              format: date-time
+              description: Creation timestamp
+
+    SantaGroupCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Group title
+        ownerUserId:
+          type: integer
+          format: int64
+          description: ID of the group owner
+        expiration:
+          type: string
+          format: date
+          description: Expiration date
+        status:
+          type: integer
+          description: Group status
+
+    SantaGroupUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Updated title
+        expiration:
+          type: string
+          format: date
+          description: Updated expiration date
+        status:
+          type: integer
+          description: Updated status
+
+    SantaGroupRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID
+        title:
+          type: string
+          description: Group title
+
+    SantaGroup:
+      allOf:
+        - $ref: '#/components/schemas/SantaGroupRef'
+        - type: object
+          properties:
+            owner:
+              $ref: '#/components/schemas/UserRef'
+            expiration:
+              type: string
+              format: date
+              description: Expiration date
+            status:
+              type: integer
+              description: Group status
+            santaPairs:
+              type: array
+              items:
+                $ref: '#/components/schemas/SantaPairRef'
+            users:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserRef'
+            createdAt:
+              type: string
+              format: date-time
+              description: Creation timestamp
+
+    UserRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID
+        username:
+          type: string
+          description: Username
+
+    UserСreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Unique username
+        email:
+          type: string
+          format: email
+          description: User email
+        fullName:
+          type: string
+          description: Full name
+        password:
+          type: string
+          description: Password
+        birthday:
+          type: string
+          format: date
+          description: Date of birth
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Unique username
+        email:
+          type: string
+          format: email
+          description: User email
+        fullName:
+          type: string
+          description: Full name
+        password:
+          type: string
+          description: Password
+        birthday:
+          type: string
+          format: date
+          description: Date of birth
+
+    UserLoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Unique username
+        password:
+          type: string
+          description: Password
+
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UserRef'
+        - type: object
+          properties:
+            email:
+              type: string
+              format: email
+              description: User email
+            fullName:
+              type: string
+              description: Full name
+            birthday:
+              type: string
+              format: date
+              description: Date of birth
