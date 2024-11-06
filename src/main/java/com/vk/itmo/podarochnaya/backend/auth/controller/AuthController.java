@@ -4,7 +4,6 @@ package com.vk.itmo.podarochnaya.backend.auth.controller;
 import com.vk.itmo.podarochnaya.backend.auth.model.JwtResponse;
 import com.vk.itmo.podarochnaya.backend.auth.model.SignInRequest;
 import com.vk.itmo.podarochnaya.backend.auth.model.SignUpRequest;
-import com.vk.itmo.podarochnaya.backend.auth.model.UserDTO;
 import com.vk.itmo.podarochnaya.backend.auth.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

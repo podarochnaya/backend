@@ -2,6 +2,8 @@ package com.vk.itmo.podarochnaya.backend.wishlist.service;
 
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
+import io.minio.errors.MinioException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,8 +15,27 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GiftImageService {
 
+
     private final MinioClient minioClient;
     private String bucketName = "gift-images";
+
+    @PostConstruct
+    public void initializeBucket() {
+        try {
+            // Проверка, существует ли корзина
+            if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
+                // Если не существует, создаем корзину
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+                System.out.println("Bucket '" + bucketName + "' created successfully.");
+            } else {
+                System.out.println("Bucket '" + bucketName + "' already exists.");
+            }
+        } catch (MinioException e) {
+            System.out.println("Error while checking/creating the bucket: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("General error: " + e.getMessage());
+        }
+    }
 
     public String uploadGiftImage(MultipartFile file) throws Exception {
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
@@ -62,9 +83,7 @@ public class GiftImageService {
     }
 
     public byte[] getFileAsBytes(String photoUrl) throws Exception {
-        String[] urlParts = photoUrl.split("/");
-        String bucketName = urlParts[2];
-        String fileName = urlParts[3];
+        String fileName = photoUrl;
 
         GetObjectResponse response = minioClient.getObject(
                 GetObjectArgs.builder()

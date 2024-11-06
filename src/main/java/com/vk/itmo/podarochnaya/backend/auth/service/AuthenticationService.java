@@ -2,7 +2,6 @@ package com.vk.itmo.podarochnaya.backend.auth.service;
 
 import com.vk.itmo.podarochnaya.backend.auth.model.SignInRequest;
 import com.vk.itmo.podarochnaya.backend.auth.model.SignUpRequest;
-import com.vk.itmo.podarochnaya.backend.auth.model.UserDTO;
 import com.vk.itmo.podarochnaya.backend.jwt.JwtService;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.service.UserService;

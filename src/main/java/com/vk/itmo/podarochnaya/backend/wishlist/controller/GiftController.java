@@ -21,8 +21,8 @@ public class GiftController {
 
     @PostMapping
     public ResponseEntity<Gift> createGift(
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("data") GiftCreateRequest request) throws Exception {
+            @RequestPart(value = "file") MultipartFile file,
+            @RequestPart(value = "data") GiftCreateRequest request) throws Exception {
         Gift createdGift = giftService.createGift(request, file);
         return ResponseEntity.ok(createdGift);
     }

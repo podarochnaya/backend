@@ -107,18 +107,15 @@
         </createTable>
 
         <createTable tableName="wishlist">
-            <column name="id" type="BIGINT">
-                <constraints
-                        nullable="false"
-                        primaryKey="true"
-                        primaryKeyName="pk_wishlist"/>
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_wishlist"/>
             </column>
             <column name="created_at" type="DATETIME"/>
             <column name="title" type="VARCHAR(512)"/>
             <column name="description" type="VARCHAR(255)"/>
-            <column name="status" type="INT"/>
+            <column name="status" type="TEXT"/>
             <column name="owner_user_id" type="BIGINT"/>
-            <column name="visibility" type="INT"/>
+            <column name="visibility" type="TEXT"/>
         </createTable>
 
         <!-- Add foreign key constraints -->
