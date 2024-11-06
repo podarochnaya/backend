@@ -1,6 +1,7 @@
 package com.vk.itmo.podarochnaya.backend.santa.controller;
 
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPair;
+import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPairRequest;
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class SantaPairController {
 
     @PostMapping
     public SantaPair createSantaPair(
-        @RequestBody SantaPair santaPair
+        @RequestBody SantaPairRequest santaPair
     ) {
         throw new UnsupportedOperationException("createSantaPair is not implemented yet");
     }
@@ -37,9 +38,16 @@ public class SantaPairController {
     @PutMapping("/{id}")
     public SantaPair updateSantaPair(
         @PathVariable Long id,
-        @RequestBody SantaPair santaPair
+        @RequestBody SantaPairRequest santaPair
     ) {
         throw new UnsupportedOperationException("updateSantaPair is not implemented yet");
+    }
+
+    @PostMapping("distrbute-free/{id}")
+    public SantaPair distributeFreeUsersToSantaPairs(
+        @PathVariable Long id
+    ) {
+        throw new UnsupportedOperationException("distributeFreeUsersToSantaPairs is not implemented yet");
     }
 
     @DeleteMapping("/{id}")

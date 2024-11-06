@@ -1,6 +1,7 @@
 package com.vk.itmo.podarochnaya.backend.santa.controller;
 
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroup;
+import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroupRequest;
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class SantaGroupController {
 
     @PostMapping
     public SantaGroup createSantaGroup(
-        @RequestBody SantaGroup santaGroup
+        @RequestBody SantaGroupRequest santaGroup
     ) {
         throw new UnsupportedOperationException("createSantaGroup is not implemented yet");
     }
@@ -37,7 +38,7 @@ public class SantaGroupController {
     @PutMapping("/{id}")
     public SantaGroup updateSantaGroup(
         @PathVariable Long id,
-        @RequestBody SantaGroup santaGroup
+        @RequestBody SantaGroupRequest santaGroup
     ) {
         throw new UnsupportedOperationException("updateSantaGroup is not implemented yet");
     }
