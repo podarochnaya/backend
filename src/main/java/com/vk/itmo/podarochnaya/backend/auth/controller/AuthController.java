@@ -1,6 +1,9 @@
 package com.vk.itmo.podarochnaya.backend.auth.controller;
 
 
+import com.vk.itmo.podarochnaya.backend.auth.model.JwtResponse;
+import com.vk.itmo.podarochnaya.backend.auth.model.SignInRequest;
+import com.vk.itmo.podarochnaya.backend.auth.model.SignUpRequest;
 import com.vk.itmo.podarochnaya.backend.auth.model.UserDTO;
 import com.vk.itmo.podarochnaya.backend.auth.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -18,12 +21,16 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/sign-up")
-    public String signUp(@RequestBody @Valid UserDTO request) {
-        return authenticationService.signUp(request);
+    public JwtResponse signUp(@RequestBody @Valid SignUpRequest request) {
+        return JwtResponse.builder()
+                .token(authenticationService.signUp(request))
+                .build();
     }
 
     @PostMapping("/sign-in")
-    public String signIn(@RequestBody @Valid UserDTO request) {
-        return authenticationService.signIn(request);
+    public JwtResponse signIn(@RequestBody @Valid SignInRequest request) {
+        return JwtResponse.builder()
+                .token(authenticationService.signIn(request))
+                .build();
     }
 }

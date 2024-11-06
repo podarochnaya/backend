@@ -1,9 +1,10 @@
 package com.vk.itmo.podarochnaya.backend.auth.service;
 
+import com.vk.itmo.podarochnaya.backend.auth.model.SignInRequest;
+import com.vk.itmo.podarochnaya.backend.auth.model.SignUpRequest;
 import com.vk.itmo.podarochnaya.backend.auth.model.UserDTO;
 import com.vk.itmo.podarochnaya.backend.jwt.JwtService;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
-import com.vk.itmo.podarochnaya.backend.user.jpa.UserRepository;
 import com.vk.itmo.podarochnaya.backend.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +27,13 @@ public class AuthenticationService {
      * @param request данные пользователя
      * @return токен
      */
-    public String signUp(UserDTO request) {
+    public String signUp(SignUpRequest request) {
         var user = UserEntity.builder()
-                .birthday(request.getBirthday())
-                .email(request.getEmail())
-                .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .fullname(request.getFullname())
+                .birthday(request.getUser().getBirthday())
+                .email(request.getUser().getEmail())
+                .passwordHash(passwordEncoder.encode(request.getUser().getPassword()))
+                .fullname(request.getUser().getFullname())
+                .username(request.getUser().getUsername())
                 .build();
 
         userService.create(user);
@@ -44,14 +46,14 @@ public class AuthenticationService {
      * @param request данные пользователя
      * @return токен
      */
-    public String signIn(UserDTO request) {
+    public String signIn(SignInRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getUsername(),
+                request.getEmail(),
                 request.getPassword()
         ));
         var user = userService
                 .userDetailsService()
-                .loadUserByUsername(request.getUsername());
+                .loadUserByUsername(request.getEmail());
         return jwtService.generateToken(user);
     }
 }
