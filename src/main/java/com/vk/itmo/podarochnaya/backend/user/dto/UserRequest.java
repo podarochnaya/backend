@@ -1,20 +1,17 @@
-package com.vk.itmo.podarochnaya.backend.auth.model;
+package com.vk.itmo.podarochnaya.backend.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-
 import java.util.Date;
+import lombok.Data;
 
 import static java.util.Objects.requireNonNull;
 
 @Data
-public class UserDTO {
-    private final @NotBlank String username;
-
+public class UserRequest {
     private final @NotBlank String email;
 
     private final @NotBlank String fullName;
@@ -23,24 +20,15 @@ public class UserDTO {
 
     private final @NotNull Date birthday;
 
-
     @JsonCreator
-    private UserDTO(@Nonnull @JsonProperty("username") @NotBlank String username,
-                    @Nonnull @JsonProperty("email") @NotBlank String email,
-                    @Nonnull @JsonProperty("fullName") @NotBlank String fullName,
-                    @Nonnull @JsonProperty("password") @NotBlank String password,
-                    @Nonnull @JsonProperty("birthday") @NotNull Date birthday) {
-        this.username = requireNonNull(username, "username");
+    private UserRequest(@Nonnull @JsonProperty("email") @NotBlank String email,
+                        @Nonnull @JsonProperty("fullName") @NotBlank String fullName,
+                        @Nonnull @JsonProperty("password") @NotBlank String password,
+                        @Nonnull @JsonProperty("birthday") @NotNull Date birthday) {
         this.email = requireNonNull(email, "email");
         this.fullName = requireNonNull(fullName, "fullName");
         this.password = requireNonNull(password, "password");
         this.birthday = requireNonNull(birthday, "birthday");
-    }
-
-    @Nonnull
-    @JsonProperty("username")
-    public @NotBlank String getUsername() {
-        return username;
     }
 
     @Nonnull

@@ -2,14 +2,13 @@ package com.vk.itmo.podarochnaya.backend.wishlist.mapper;
 
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.Gift;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface GiftMapper {
@@ -26,7 +25,7 @@ public interface GiftMapper {
     @Mapping(source = "wishlist.id", target = "wishlist.id")
     @Mapping(source = "wishlist.title", target = "wishlist.title")
     @Mapping(source = "reserver.id", target = "reserver.id")
-    @Mapping(source = "reserver.username", target = "reserver.username")
+    @Mapping(source = "reserver.email", target = "reserver.email")
     @Mapping(source = "createdAt", target = "createdAt")
     Gift toGift(GiftEntity giftEntity);
 

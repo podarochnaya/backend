@@ -11,6 +11,10 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,11 +22,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -32,9 +31,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity extends BaseEntity implements UserDetails {
-    @Column(name = "username")
-    private String username;
-
     @Column(name = "email", nullable = false)
     private String email;
 
@@ -83,6 +79,11 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Override
     public String getPassword() {
         return passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 
     @Override

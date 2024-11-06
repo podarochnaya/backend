@@ -223,4 +223,8 @@
                 columnName="visibility"
                 newDataType="VARCHAR(20)"/>
     </changeSet>
+
+    <changeSet id="4" author="boris">
+        <dropColumn tableName="users" columnName="username"/>
+    </changeSet>
 </databaseChangeLog>
