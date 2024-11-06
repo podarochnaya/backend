@@ -19,8 +19,8 @@ public class UserService {
      *
      * @return сохраненный пользователь
      */
-    public UserEntity save(UserEntity UserEntity) {
-        return repository.save(UserEntity);
+    public UserEntity save(UserEntity userEntity) {
+        return repository.save(userEntity);
     }
 
     /**
