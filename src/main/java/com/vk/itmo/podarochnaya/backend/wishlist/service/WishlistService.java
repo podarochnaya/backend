@@ -1,5 +1,6 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.service;
 
+import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.Wishlist;
@@ -48,22 +49,33 @@ public class WishlistService {
     }
 
     public Wishlist updateWishlist(Long wishlistId, WishlistUpdateRequest wishlistUpdateRequest) {
-        Optional<UserEntity> user = userRepository.findById(wishlistUpdateRequest.getOwnerUserId());
-        if (user.isEmpty()) {
-            throw new IllegalArgumentException("Invalid user ID");
-        }
         Optional<WishlistEntity> existingWishlist = wishlistRepository.findById(wishlistId);
+        WishlistEntity wishlist = existingWishlist.get();
         if (existingWishlist.isPresent()) {
-            WishlistEntity wishlist = existingWishlist.get();
-            wishlist.setTitle(wishlistUpdateRequest.getTitle());
-            wishlist.setDescription(wishlistUpdateRequest.getDescription());
-            wishlist.setStatus(wishlistUpdateRequest.getStatus());
-            wishlist.setVisibility(wishlistUpdateRequest.getVisibility());
-            wishlist.setOwner(user.get());
+            if (wishlistUpdateRequest.getOwnerUserId() != null) {
+                Optional<UserEntity> user = userRepository.findById(wishlistUpdateRequest.getOwnerUserId());
+                if (user.isEmpty()) {
+                    throw new NotFoundException("User not found");
+                }
+                wishlist.setOwner(user.get());
+            }
+            if (wishlistUpdateRequest.getTitle() != null) {
+                wishlist.setTitle(wishlistUpdateRequest.getTitle());
+            }
+            if (wishlistUpdateRequest.getDescription() != null) {
+                wishlist.setDescription(wishlistUpdateRequest.getDescription());
+            }
+            if (wishlistUpdateRequest.getStatus() != null) {
+                wishlist.setStatus(wishlistUpdateRequest.getStatus());
+            }
+            if (wishlistUpdateRequest.getVisibility() != null) {
+                wishlist.setVisibility(wishlistUpdateRequest.getVisibility());
+            }
             return mapper.toWishlist(wishlistRepository.save(wishlist));
         }
         return null;
     }
+
 
     public boolean deleteWishlist(Long wishlistId) {
         Optional<WishlistEntity> existingWishlist = wishlistRepository.findById(wishlistId);

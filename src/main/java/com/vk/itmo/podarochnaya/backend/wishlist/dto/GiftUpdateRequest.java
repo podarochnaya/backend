@@ -7,9 +7,9 @@ public class GiftUpdateRequest {
     private String title;
     private String description;
     private String url;
-    private double price;
-    private boolean reserved;
+    private Double price;
+    private Boolean reserved;
     private Long reserverUserId;
     private String photoId;
-    private int status;
+    private Integer status;
 }

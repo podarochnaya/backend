@@ -1,5 +1,6 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.service;
 
+import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.Gift;
@@ -12,6 +13,7 @@ import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.GiftMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GiftService {
 
     private final GiftRepository giftRepository;
@@ -34,9 +37,12 @@ public class GiftService {
     @Transactional
     public Gift createGift(GiftCreateRequest giftCreateRequest, MultipartFile image) throws Exception {
         Optional<WishlistEntity> wishlist = wishlistRepository.findById(giftCreateRequest.getWishlistId());
+        if (wishlist.isEmpty()) {
+            throw new NotFoundException("Wishlist not found");
+        }
         Optional<UserEntity> user = userRepository.findById(giftCreateRequest.getReserverUserId());
-        if (wishlist.isEmpty() || user.isEmpty()) {
-            throw new IllegalArgumentException("Invalid wishlist or user ID");
+        if (user.isEmpty()) {
+            throw new NotFoundException("User not found");
         }
 
         String photoUrl = null;
@@ -60,19 +66,37 @@ public class GiftService {
     @Transactional
     public Gift updateGift(Long giftId, GiftUpdateRequest giftUpdateRequest, MultipartFile file) throws Exception {
         Optional<GiftEntity> giftEntityOptional = giftRepository.findById(giftId);
-        Optional<UserEntity> user = userRepository.findById(giftUpdateRequest.getReserverUserId());
-        if (giftEntityOptional.isEmpty() || user.isEmpty()) {
-            throw new IllegalArgumentException("Gift or user not found");
+        if (giftEntityOptional.isEmpty()) {
+            throw new NotFoundException("Gift not found");
         }
         GiftEntity giftEntity = giftEntityOptional.get();
-        giftEntity.setTitle(giftUpdateRequest.getTitle())
-                .setDescription(giftUpdateRequest.getDescription())
-                .setUrl(giftUpdateRequest.getUrl())
-                .setPrice(BigDecimal.valueOf(giftUpdateRequest.getPrice()))
-                .setReserved(giftUpdateRequest.isReserved())
-                .setStatus(giftUpdateRequest.getStatus())
-                .setReserver(user.get());
 
+        if (giftUpdateRequest.getReserverUserId() != null) {
+            Optional<UserEntity> user = userRepository.findById(giftUpdateRequest.getReserverUserId());
+            if (giftEntityOptional.isEmpty() || user.isEmpty()) {
+                throw new NotFoundException("User not found");
+            }
+            giftEntity.setReserver(user.get());
+        }
+
+        if (giftUpdateRequest.getTitle() != null) {
+            giftEntity.setTitle(giftUpdateRequest.getTitle());
+        }
+        if (giftUpdateRequest.getDescription() != null) {
+            giftEntity.setDescription(giftUpdateRequest.getDescription());
+        }
+        if (giftUpdateRequest.getUrl() != null) {
+            giftEntity.setUrl(giftUpdateRequest.getUrl());
+        }
+        if (giftUpdateRequest.getPrice() != null) {
+            giftEntity.setPrice(BigDecimal.valueOf(giftUpdateRequest.getPrice()));
+        }
+        if (giftUpdateRequest.getStatus() != null) {
+            giftEntity.setStatus(giftUpdateRequest.getStatus());
+        }
+        if (giftUpdateRequest.getReserved() != null) {
+            giftEntity.setReserved(giftUpdateRequest.getReserved());
+        }
         if (file != null && !file.isEmpty()) {
             String newPhotoUrl = giftImageService.uploadGiftImage(file);
             giftEntity.setPhotoId(newPhotoUrl);
@@ -82,10 +106,11 @@ public class GiftService {
     }
 
 
+
     public GiftWithImageResponse getGift(Long giftId) throws Exception {
         Optional<GiftEntity> giftEntityOptional = giftRepository.findById(giftId);
         if (giftEntityOptional.isEmpty()) {
-            throw new IllegalArgumentException("Gift not found");
+            throw new NotFoundException("Gift not found");
         }
         GiftEntity giftEntity = giftEntityOptional.get();
         Gift gift = giftMapper.toGift(giftEntity);
@@ -121,7 +146,7 @@ public class GiftService {
     public void deleteGift(Long giftId) {
         Optional<GiftEntity> giftEntityOptional = giftRepository.findById(giftId);
         if (giftEntityOptional.isEmpty()) {
-            throw new IllegalArgumentException("Gift not found");
+            throw new NotFoundException("Gift not found");
         }
         GiftEntity giftEntity = giftEntityOptional.get();
         String photoUrl = giftEntity.getPhotoId();
@@ -129,7 +154,7 @@ public class GiftService {
             try {
                 giftImageService.deleteGiftImage(photoUrl);
             } catch (Exception e) {
-                System.err.println("Failed to delete image from MinIO: " + e.getMessage());
+                log.error("Failed to delete image from MinIO: " + e.getMessage());
             }
         }
         giftRepository.deleteById(giftId);

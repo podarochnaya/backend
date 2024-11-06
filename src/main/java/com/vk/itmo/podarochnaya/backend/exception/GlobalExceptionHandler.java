@@ -2,7 +2,6 @@ package com.vk.itmo.podarochnaya.backend.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,13 +24,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Object> handleNotFoundException(final ChangeSetPersister.NotFoundException exception) {
-        logger.warn(exception.getMessage(), exception);
-        return buildErrorResponse(exception, HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<Object> handleAccessDeniedException(final AccessDeniedException exception) {
@@ -47,10 +39,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handleUsernameNotFoundException(final UsernameNotFoundException exception) {
         logger.warn(exception.getMessage(), exception);
-        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(exception, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleNotFoundException(final NotFoundException exception) {
+        logger.warn(exception.getMessage(), exception);
+        return buildErrorResponse(exception, HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity<Object> buildErrorResponse(
