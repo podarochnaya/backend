@@ -20,15 +20,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserСreateRequest'
+              $ref: '#/components/schemas/SignUpRequest'
       responses:
         '200':
           description: User signed up successfully
           content:
             application/json:
               schema:
-                type: string
-                description: Confirmation message
+                $ref: '#/components/schemas/JwtResponse'
 
   /auth/sign-in:
     post:
@@ -41,15 +40,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserLoginRequest'
+              $ref: '#/components/schemas/SignInRequest'
       responses:
         '200':
           description: User signed in successfully
           content:
             application/json:
               schema:
-                type: string
-                description: Authentication token
+                $ref: '#/components/schemas/JwtResponse'
 
   ### Users
   /api/v1/users/{userId}:
@@ -94,7 +92,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserUpdateRequest'
+              $ref: '#/components/schemas/UserRequest'
       responses:
         '200':
           description: User updated successfully
@@ -910,7 +908,30 @@ components:
           type: string
           description: Username
 
-    UserСreateRequest:
+    SignUpRequest:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserRequest'
+
+    SignInRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Unique email
+        password:
+          type: string
+          description: Password
+
+    JwtResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT Token
+
+    UserRequest:
       type: object
       properties:
         username:
@@ -930,37 +951,6 @@ components:
           type: string
           format: date
           description: Date of birth
-
-    UserUpdateRequest:
-      type: object
-      properties:
-        username:
-          type: string
-          description: Unique username
-        email:
-          type: string
-          format: email
-          description: User email
-        fullName:
-          type: string
-          description: Full name
-        password:
-          type: string
-          description: Password
-        birthday:
-          type: string
-          format: date
-          description: Date of birth
-
-    UserLoginRequest:
-      type: object
-      properties:
-        username:
-          type: string
-          description: Unique username
-        password:
-          type: string
-          description: Password
 
     User:
       allOf:
