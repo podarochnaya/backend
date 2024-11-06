@@ -73,11 +73,6 @@ public class UserService {
         return this::getByUsername;
     }
 
-    public UserResponse getById(Long userId) {
-        UserEntity userEntity =  repository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        return mapper.toUserResponse(userEntity);
-    }
 
     public Long deleteById(Long userId) {
         UserEntity authenticatedUser = getAuthenticatedUser();

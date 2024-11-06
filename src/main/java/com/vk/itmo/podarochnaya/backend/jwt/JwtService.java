@@ -1,6 +1,6 @@
 package com.vk.itmo.podarochnaya.backend.jwt;
 
-import com.vk.itmo.podarochnaya.backend.user.dto.UserRequest;
+import com.vk.itmo.podarochnaya.backend.user.dto.UserCreateRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -39,7 +39,7 @@ public class JwtService {
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        if (userDetails instanceof UserRequest customUserDTODetails) {
+        if (userDetails instanceof UserCreateRequest customUserDTODetails) {
             claims.put("email", customUserDTODetails.getEmail());
         }
         return generateToken(claims, userDetails);

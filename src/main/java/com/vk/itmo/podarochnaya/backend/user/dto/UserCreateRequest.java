@@ -9,7 +9,7 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class UserRequest {
+public class UserCreateRequest {
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email must be a valid email address")
     private String email;
