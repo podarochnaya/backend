@@ -209,11 +209,11 @@
         <modifyDataType
                 tableName="wishlist"
                 columnName="status"
-                newDataType="TEXT"/>
+                newDataType="VARCHAR(20)"/>
 
         <modifyDataType
                 tableName="wishlist"
                 columnName="visibility"
-                newDataType="TEXT"/>
+                newDataType="VARCHAR(20)"/>
     </changeSet>
 </databaseChangeLog>
