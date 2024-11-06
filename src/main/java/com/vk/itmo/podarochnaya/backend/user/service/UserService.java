@@ -1,5 +1,7 @@
 package com.vk.itmo.podarochnaya.backend.user.service;
 
+import com.vk.itmo.podarochnaya.backend.exception.DataConflictException;
+import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserRepository;
 import lombok.AllArgsConstructor;
@@ -27,13 +29,8 @@ public class UserService {
      * @return созданный пользователь
      */
     public UserEntity create(UserEntity user) {
-        if (repository.existsByUsername(user.getUsername())) {
-            // Заменить на свои исключения
-            throw new RuntimeException("Пользователь с таким именем уже существует");
-        }
-
         if (repository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Пользователь с таким email уже существует");
+            throw new DataConflictException("Пользователь с таким email уже существует");
         }
 
         return save(user);
@@ -44,10 +41,9 @@ public class UserService {
      *
      * @return пользователь
      */
-    public UserEntity getByUsername(String userName) {
-        return repository.findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
-
+    public UserEntity getByUsername(String email) {
+        return repository.findByEmail(email)
+            .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
     }
 
     /**

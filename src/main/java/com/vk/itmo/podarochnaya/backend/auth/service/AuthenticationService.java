@@ -28,12 +28,11 @@ public class AuthenticationService {
      */
     public String signUp(SignUpRequest request) {
         var user = UserEntity.builder()
-                .birthday(request.getUser().getBirthday())
-                .email(request.getUser().getEmail())
-                .passwordHash(passwordEncoder.encode(request.getUser().getPassword()))
-                .fullname(request.getUser().getFullname())
-                .username(request.getUser().getUsername())
-                .build();
+            .birthday(request.getUser().getBirthday())
+            .email(request.getUser().getEmail())
+            .passwordHash(passwordEncoder.encode(request.getUser().getPassword()))
+            .fullname(request.getUser().getFullname())
+            .build();
 
         userService.create(user);
         return jwtService.generateToken(user);
@@ -47,12 +46,12 @@ public class AuthenticationService {
      */
     public String signIn(SignInRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getEmail(),
-                request.getPassword()
+            request.getEmail(),
+            request.getPassword()
         ));
         var user = userService
-                .userDetailsService()
-                .loadUserByUsername(request.getEmail());
+            .userDetailsService()
+            .loadUserByUsername(request.getEmail());
         return jwtService.generateToken(user);
     }
 }
