@@ -9,12 +9,16 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
 @Entity
+@Accessors(chain = true)
 @Table(name = "gift")
 public class GiftEntity extends BaseEntity {
     @Column(name = "title")
