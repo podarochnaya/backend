@@ -2,17 +2,28 @@ package com.vk.itmo.podarochnaya.backend.user.service;
 
 import com.vk.itmo.podarochnaya.backend.exception.DataConflictException;
 import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
+import com.vk.itmo.podarochnaya.backend.user.dto.UserResponse;
+import com.vk.itmo.podarochnaya.backend.user.dto.UserUpdateRequest;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserRepository;
+import com.vk.itmo.podarochnaya.backend.user.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UserService {
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
+    private final UserMapper mapper;
 
     /**
      * Сохранение пользователя
@@ -55,5 +66,64 @@ public class UserService {
      */
     public UserDetailsService userDetailsService() {
         return this::getByUsername;
+    }
+
+    public UserResponse getById(Long userId) {
+        UserEntity userEntity =  repository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        return mapper.toUserResponse(userEntity);
+    }
+
+    public Long deleteById(Long userId) {
+        UserEntity authenticatedUser = getAuthenticatedUser();
+        UserEntity userEntity =  repository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        if (!authenticatedUser.getEmail().equals(userEntity.getEmail())) {
+            throw new AccessDeniedException("Вы не имеете права удалять этот аккаунт");
+        }
+        repository.deleteById(userId);
+        return userId;
+    }
+
+    public List<UserResponse> getAllUsers() {
+        return mapper.toUserResponseList(repository.findAll());
+    }
+
+    public UserResponse updateUserById(Long userId, UserUpdateRequest userRequest) {
+        UserEntity authenticatedUser = getAuthenticatedUser();
+        UserEntity userEntity =  repository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        if (!authenticatedUser.getEmail().equals(userEntity.getEmail())) {
+            throw new AccessDeniedException("Вы не имеете права изменять этот аккаунт");
+        }
+
+        if (userRequest.getEmail() != null && !userRequest.getEmail().equals(userEntity.getEmail())) {
+            boolean emailExists = repository.existsByEmailAndIdNot(userRequest.getEmail(), userId);
+            if (emailExists) {
+                throw new DataConflictException("Такой email уже существует");
+            }
+            userEntity.setEmail(userRequest.getEmail());
+        }
+        if (userRequest.getFullName() != null) {
+            userEntity.setFullname(userRequest.getFullName());
+        }
+        if (userRequest.getPassword() != null) {
+            userEntity.setPasswordHash(passwordEncoder.encode(userRequest.getPassword()));
+        }
+        if (userRequest.getBirthday() != null) {
+            userEntity.setBirthday(userRequest.getBirthday());
+        }
+        UserEntity updatedUser = repository.save(userEntity);
+        return mapper.toUserResponse(updatedUser);
+    }
+
+    private UserEntity getAuthenticatedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return (UserEntity) principal;
+        } else {
+            throw new AccessDeniedException("Не удалось определить пользователя");
+        }
     }
 }
