@@ -2,11 +2,7 @@ package com.vk.itmo.podarochnaya.backend.santa.jpa;
 
 import com.vk.itmo.podarochnaya.backend.common.jpa.BaseEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "santa_pair")

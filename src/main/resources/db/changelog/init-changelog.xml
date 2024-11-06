@@ -206,4 +206,21 @@
                 columnName="password_hash"
                 newDataType="VARCHAR(255)"/>
     </changeSet>
+
+    <changeSet id="3" author="elizaveta">
+        <addAutoIncrement
+                tableName="wishlist"
+                columnName="id"
+                columnDataType="BIGINT"/>
+
+        <modifyDataType
+                tableName="wishlist"
+                columnName="status"
+                newDataType="VARCHAR(20)"/>
+
+        <modifyDataType
+                tableName="wishlist"
+                columnName="visibility"
+                newDataType="VARCHAR(20)"/>
+    </changeSet>
 </databaseChangeLog>
