@@ -11,17 +11,28 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "users")
-public class UserEntity extends BaseEntity {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "username")
     private String username;
 
@@ -39,17 +50,17 @@ public class UserEntity extends BaseEntity {
 
     @ManyToMany
     @JoinTable(
-        name = "users_wishlists",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "wishlist_id")
+            name = "users_wishlists",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "wishlist_id")
     )
     private Set<WishlistEntity> wishlists;
 
     @ManyToMany
     @JoinTable(
-        name = "users_santa_groups",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "santa_group_id")
+            name = "users_santa_groups",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "santa_group_id")
     )
     private Set<SantaGroupEntity> santaGroups;
 
@@ -64,4 +75,34 @@ public class UserEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "taker")
     private List<SantaPairEntity> takingPairs;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return passwordHash;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
 }
