@@ -25,7 +25,7 @@ public interface GiftMapper {
     @Mapping(source = "wishlist.id", target = "wishlist.id")
     @Mapping(source = "wishlist.title", target = "wishlist.title")
     @Mapping(source = "reserver.id", target = "reserver.id")
-    @Mapping(source = "reserver.username", target = "reserver.email")
+    @Mapping(source = "reserver.email", target = "reserver.email")
     @Mapping(source = "createdAt", target = "createdAt")
     Gift toGift(GiftEntity giftEntity);
 

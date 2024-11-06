@@ -59,12 +59,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> buildErrorResponse(
-        final Exception exception,
-        final HttpStatus httpStatus
+            final Exception exception,
+            final HttpStatus httpStatus
     ) {
         ErrorResponse errorResponse = new ErrorResponse(
-            httpStatus.name(),
-            exception.getMessage()
+                httpStatus.name(),
+                exception.getMessage()
         );
         return ResponseEntity.status(httpStatus).body(errorResponse);
     }

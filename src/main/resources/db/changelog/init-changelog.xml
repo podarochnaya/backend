@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
-    objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
     <changeSet id="1730816560697-1" author="bors">
         <!-- Create tables -->
         <createTable tableName="gift">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints
-                    nullable="false"
-                    primaryKey="true"
-                    primaryKeyName="pk_gift"
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_gift"
                 />
             </column>
             <column name="created_at" type="DATETIME"/>
@@ -30,9 +30,9 @@
         <createTable tableName="santa_group">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints
-                    nullable="false"
-                    primaryKey="true"
-                    primaryKeyName="pk_santa_group"/>
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_santa_group"/>
             </column>
             <column name="created_at" type="DATETIME"/>
             <column name="title" type="VARCHAR(255)"/>
@@ -46,9 +46,9 @@
         <createTable tableName="santa_pair">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints
-                    nullable="false"
-                    primaryKey="true"
-                    primaryKeyName="pk_santa_pair"/>
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_santa_pair"/>
             </column>
             <column name="created_at" type="DATETIME"/>
             <column name="giver_user_id" type="BIGINT"/>
@@ -60,9 +60,9 @@
         <createTable tableName="users">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints
-                    nullable="false"
-                    primaryKey="true"
-                    primaryKeyName="pk_users"/>
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_users"/>
             </column>
             <column name="created_at" type="DATETIME"/>
             <column name="username" type="VARCHAR(64)"/>
@@ -79,39 +79,39 @@
         <createTable tableName="users_santa_groups">
             <column name="santa_group_id" type="BIGINT">
                 <constraints
-                    nullable="false"
-                    primaryKey="true"
-                    primaryKeyName="pk_users_santa_groups"/>
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_users_santa_groups"/>
             </column>
             <column name="user_id" type="BIGINT">
                 <constraints
-                    nullable="false"
-                    primaryKey="true"
-                    primaryKeyName="pk_users_santa_groups"/>
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_users_santa_groups"/>
             </column>
         </createTable>
 
         <createTable tableName="users_wishlists">
             <column name="user_id" type="BIGINT">
                 <constraints
-                    nullable="false"
-                    primaryKey="true"
-                    primaryKeyName="pk_users_wishlists"/>
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_users_wishlists"/>
             </column>
             <column name="wishlist_id" type="BIGINT">
                 <constraints
-                    nullable="false"
-                    primaryKey="true"
-                    primaryKeyName="pk_users_wishlists"/>
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_users_wishlists"/>
             </column>
         </createTable>
 
         <createTable tableName="wishlist">
             <column name="id" type="BIGINT">
                 <constraints
-                    nullable="false"
-                    primaryKey="true"
-                    primaryKeyName="pk_wishlist"/>
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_wishlist"/>
             </column>
             <column name="created_at" type="DATETIME"/>
             <column name="title" type="VARCHAR(512)"/>
@@ -202,26 +202,26 @@
 
     <changeSet id="2" author="aalarin">
         <modifyDataType
-            tableName="users"
-            columnName="password_hash"
-            newDataType="VARCHAR(255)"/>
+                tableName="users"
+                columnName="password_hash"
+                newDataType="VARCHAR(255)"/>
     </changeSet>
 
     <changeSet id="3" author="elizaveta">
         <addAutoIncrement
-            tableName="wishlist"
-            columnName="id"
-            columnDataType="BIGINT"/>
+                tableName="wishlist"
+                columnName="id"
+                columnDataType="BIGINT"/>
 
         <modifyDataType
-            tableName="wishlist"
-            columnName="status"
-            newDataType="VARCHAR(20)"/>
+                tableName="wishlist"
+                columnName="status"
+                newDataType="VARCHAR(20)"/>
 
         <modifyDataType
-            tableName="wishlist"
-            columnName="visibility"
-            newDataType="VARCHAR(20)"/>
+                tableName="wishlist"
+                columnName="visibility"
+                newDataType="VARCHAR(20)"/>
     </changeSet>
 
     <changeSet id="4" author="boris">

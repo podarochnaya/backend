@@ -46,12 +46,12 @@ public class AuthenticationService {
      */
     public String signIn(SignInRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-            request.getEmail(),
-            request.getPassword()
+                request.getEmail(),
+                request.getPassword()
         ));
         var user = userService
-            .userDetailsService()
-            .loadUserByUsername(request.getEmail());
+                .userDetailsService()
+                .loadUserByUsername(request.getEmail());
         return jwtService.generateToken(user);
     }
 }

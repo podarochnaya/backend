@@ -45,17 +45,17 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
     @ManyToMany
     @JoinTable(
-        name = "users_wishlists",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "wishlist_id")
+            name = "users_wishlists",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "wishlist_id")
     )
     private Set<WishlistEntity> wishlists;
 
     @ManyToMany
     @JoinTable(
-        name = "users_santa_groups",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "santa_group_id")
+            name = "users_santa_groups",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "santa_group_id")
     )
     private Set<SantaGroupEntity> santaGroups;
 
