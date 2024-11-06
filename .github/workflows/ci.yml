@@ -28,10 +28,11 @@ jobs:
 
       minio:
         image: fclairamb/minio-github-actions
-        ports: 9000:9000
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
+        ports:
+          - 9000:9000
         options: >-
           --health-cmd "curl -f http://localhost:9000/minio/health/live" 
           --health-interval 10s 
