@@ -1,57 +1,28 @@
 package com.vk.itmo.podarochnaya.backend.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import java.util.Date;
 import lombok.Data;
 
-import static java.util.Objects.requireNonNull;
-
 @Data
 public class UserRequest {
-    private final @NotBlank String email;
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Email must be a valid email address")
+    private String email;
 
-    private final @NotBlank String fullName;
+    @NotBlank(message = "Full name cannot be empty")
+    @Size(max = 255, message = "Full name must be at most 255 characters")
+    private String fullName;
 
-    private final @NotBlank String password;
+    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 8, max = 255, message = "Password must be between 8 and 255 characters")
+    private String password;
 
-    private final @NotNull Date birthday;
-
-    @JsonCreator
-    private UserRequest(@Nonnull @JsonProperty("email") @NotBlank String email,
-                        @Nonnull @JsonProperty("fullName") @NotBlank String fullName,
-                        @Nonnull @JsonProperty("password") @NotBlank String password,
-                        @Nonnull @JsonProperty("birthday") @NotNull Date birthday) {
-        this.email = requireNonNull(email, "email");
-        this.fullName = requireNonNull(fullName, "fullName");
-        this.password = requireNonNull(password, "password");
-        this.birthday = requireNonNull(birthday, "birthday");
-    }
-
-    @Nonnull
-    @JsonProperty("email")
-    public @NotBlank String getEmail() {
-        return email;
-    }
-
-    @Nonnull
-    @JsonProperty("fullName")
-    public @NotBlank String getFullname() {
-        return fullName;
-    }
-
-    @Nonnull
-    @JsonProperty("password")
-    public @NotBlank String getPassword() {
-        return password;
-    }
-
-    @Nonnull
-    @JsonProperty("birthday")
-    public @NotNull Date getBirthday() {
-        return birthday;
-    }
+    @NotNull(message = "Birthday cannot be null")
+    @Past(message = "Birthday must be in the past")
+    private Date birthday;
 }

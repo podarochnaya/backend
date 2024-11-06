@@ -31,7 +31,7 @@ public class AuthenticationService {
             .birthday(request.getUser().getBirthday())
             .email(request.getUser().getEmail())
             .passwordHash(passwordEncoder.encode(request.getUser().getPassword()))
-            .fullname(request.getUser().getFullname())
+            .fullname(request.getUser().getFullName())
             .build();
 
         userService.create(user);
@@ -46,12 +46,12 @@ public class AuthenticationService {
      */
     public String signIn(SignInRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getEmail(),
-                request.getPassword()
+            request.getEmail(),
+            request.getPassword()
         ));
         var user = userService
-                .userDetailsService()
-                .loadUserByUsername(request.getEmail());
+            .userDetailsService()
+            .loadUserByUsername(request.getEmail());
         return jwtService.generateToken(user);
     }
 }

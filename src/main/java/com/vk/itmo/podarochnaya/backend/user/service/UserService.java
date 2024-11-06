@@ -43,7 +43,12 @@ public class UserService {
      */
     public UserEntity getByUsername(String email) {
         return repository.findByEmail(email)
-            .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+            .orElseThrow(() -> new NotFoundException("User not found with email: " + email));
+    }
+
+    public UserEntity getById(long id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
     }
 
     /**

@@ -13,7 +13,7 @@ public class SantaGroup {
 
     private Date expiration;
 
-    private String status;
+    private SantaGroupStatus status;
 
     private List<SantaPair> santaPairs;
 

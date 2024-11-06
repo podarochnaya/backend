@@ -2,12 +2,19 @@ package com.vk.itmo.podarochnaya.backend.wishlist.jpa;
 
 import com.vk.itmo.podarochnaya.backend.common.jpa.BaseEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.List;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -20,15 +27,17 @@ public class WishlistEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private WishlistStatus status;
 
     @ManyToOne
     @JoinColumn(name = "owner_user_id")
     private UserEntity owner;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "visibility")
-    private String visibility;
+    private WishlistVisibility visibility;
 
     @OneToMany(mappedBy = "wishlist")
     private List<GiftEntity> gifts;
