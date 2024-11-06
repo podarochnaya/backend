@@ -1,5 +1,7 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.service;
 
+import com.vk.itmo.podarochnaya.backend.auth.utils.SecurityUtils;
+import com.vk.itmo.podarochnaya.backend.exception.AccessDeniedRuntimeException;
 import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.service.UserService;
@@ -12,7 +14,9 @@ import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.GiftMapper;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,6 +54,7 @@ public class GiftService {
             .setStatus(giftCreateRequest.getStatus())
             .setWishlist(wishlist)
             .setReserver(user)
+            .setAllowedUsers(new HashSet<>(userService.getByIds(giftCreateRequest.getAllowedUserIds())))
             .setPhotoId(photoUrl);
 
         return giftMapper.toGift(giftRepository.save(giftEntity));
@@ -58,6 +63,8 @@ public class GiftService {
     @Transactional
     public Gift updateGift(Long giftId, GiftUpdateRequest giftUpdateRequest, MultipartFile file) throws Exception {
         GiftEntity giftEntity = getGiftById(giftId);
+
+        checkOwner(giftEntity);
 
         if (giftUpdateRequest.getReserverUserId() != null) {
             UserEntity user = userService.getById(giftUpdateRequest.getReserverUserId());
@@ -94,10 +101,17 @@ public class GiftService {
             giftEntity.setPhotoId(newPhotoUrl);
         }
 
+        if (giftUpdateRequest.getAllowedUserIds() != null) {
+            giftEntity.setAllowedUsers(
+                new HashSet<>(
+                    userService.getByIds(giftUpdateRequest.getAllowedUserIds())
+                )
+            );
+        }
+
         GiftEntity updatedGift = giftRepository.save(giftEntity);
         return giftMapper.toGift(updatedGift);
     }
-
 
     public GiftWithImageResponse getGift(Long giftId) throws Exception {
         GiftEntity giftEntity = getGiftById(giftId);
@@ -114,7 +128,7 @@ public class GiftService {
 
 
     public List<GiftWithImageResponse> getGifts() throws Exception {
-        List<GiftEntity> giftEntities = giftRepository.findAll();
+        List<GiftEntity> giftEntities = giftRepository.findAllAccessibleGifts(SecurityUtils.getCurrentUserEmail());
         List<GiftWithImageResponse> responseList = new ArrayList<>();
 
         for (GiftEntity giftEntity : giftEntities) {
@@ -130,14 +144,29 @@ public class GiftService {
         return responseList;
     }
 
+    public List<GiftEntity> getGiftsByIds(List<Long> giftIds) {
+        return giftRepository.findAccessibleGiftsByIds(giftIds, SecurityUtils.getCurrentUserEmail());
+    }
+
     public GiftEntity getGiftById(Long giftId) throws Exception {
-        return giftRepository.findById(giftId)
-            .orElseThrow(() -> new NotFoundException("Gift not found. Id: " + giftId));
+        return giftRepository.findAccessibleGiftsByIds(List.of(giftId), SecurityUtils.getCurrentUserEmail()).stream().findFirst()
+            .orElseThrow(() -> new NotFoundException("Cannot find or forbidden access to gift with ID: " + giftId));
+    }
+
+    private static void checkOwner(GiftEntity giftEntity) {
+        var currentUserEmail = SecurityUtils.getCurrentUserEmail();
+        WishlistEntity wishlist = giftEntity.getWishlist();
+
+        if (!Objects.equals(wishlist.getOwner().getEmail(), currentUserEmail)) {
+            throw new AccessDeniedRuntimeException(currentUserEmail + " is not the owner of wishlist " + wishlist.getId());
+        }
     }
 
     @Transactional
     public void deleteGift(Long giftId) throws Exception {
         GiftEntity giftEntity = getGiftById(giftId);
+
+        checkOwner(giftEntity);
 
         String photoUrl = giftEntity.getPhotoId();
         if (photoUrl != null) {

@@ -8,9 +8,11 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -51,4 +53,11 @@ public class GiftEntity extends BaseEntity {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status")
     private GiftStatus status;
+
+    @ManyToMany(mappedBy = "visibleGifts")
+    private Set<UserEntity> allowedUsers;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility")
+    private GiftVisibility visibility;
 }

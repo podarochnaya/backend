@@ -30,6 +30,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(exception, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(AccessDeniedRuntimeException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Object> handleAccessDeniedRuntimeException(final AccessDeniedRuntimeException exception) {
+        logger.warn(exception.getMessage(), exception);
+        return buildErrorResponse(exception, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleIllegalArgumentException(final IllegalArgumentException exception) {

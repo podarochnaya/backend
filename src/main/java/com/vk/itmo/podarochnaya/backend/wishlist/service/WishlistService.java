@@ -1,5 +1,7 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.service;
 
+import com.vk.itmo.podarochnaya.backend.auth.utils.SecurityUtils;
+import com.vk.itmo.podarochnaya.backend.exception.AccessDeniedRuntimeException;
 import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.service.UserService;
@@ -9,7 +11,9 @@ import com.vk.itmo.podarochnaya.backend.wishlist.dto.WishlistUpdateRequest;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.WishlistMapper;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,17 +34,20 @@ public class WishlistService {
         wishlist.setStatus(wishlistCreateRequest.getStatus());
         wishlist.setOwner(user);
         wishlist.setVisibility(wishlistCreateRequest.getVisibility());
+        wishlist.setAllowedUsers(new HashSet<>(userService.getByIds(wishlistCreateRequest.getAllowedUserIds())));
 
         WishlistEntity wishlistEntity = wishlistRepository.save(wishlist);
         return mapper.toWishlist(wishlistEntity);
     }
 
     public List<Wishlist> getAllWishlists() {
-        return mapper.toWishlists(wishlistRepository.findAll());
+        return mapper.toWishlists(wishlistRepository.findAllAccessibleWishlists(SecurityUtils.getCurrentUserEmail()));
     }
 
     public Wishlist updateWishlist(Long wishlistId, WishlistUpdateRequest wishlistUpdateRequest) {
         WishlistEntity wishlist = getWishlistById(wishlistId);
+
+        checkOwner(wishlist);
 
         if (wishlistUpdateRequest.getOwnerUserId() != null) {
             UserEntity user = userService.getById(wishlistUpdateRequest.getOwnerUserId());
@@ -64,19 +71,42 @@ public class WishlistService {
             wishlist.setVisibility(wishlistUpdateRequest.getVisibility());
         }
 
+        if (wishlistUpdateRequest.getAllowedUserIds() != null) {
+            wishlist.setAllowedUsers(
+                new HashSet<>(
+                    userService.getByIds(wishlistUpdateRequest.getAllowedUserIds())
+                )
+            );
+        }
+
         return mapper.toWishlist(wishlistRepository.save(wishlist));
     }
 
-    public WishlistEntity getWishlistById(Long wishlistId) {
-        return wishlistRepository.findById(wishlistId)
-            .orElseThrow(() -> new NotFoundException("Cannot find wishlist with ID: " + wishlistId));
+    private static void checkOwner(WishlistEntity wishlist) {
+        var currentUserEmail = SecurityUtils.getCurrentUserEmail();
+
+        if (!Objects.equals(wishlist.getOwner().getEmail(), currentUserEmail)) {
+            throw new AccessDeniedRuntimeException(currentUserEmail + " is not the owner of wishlist " + wishlist.getId());
+        }
     }
 
+    public List<WishlistEntity> getWishlistsByIds(List<Long> wishlistIds) {
+        return wishlistRepository.findAccessibleWishlistsByIds(wishlistIds, SecurityUtils.getCurrentUserEmail());
+    }
+
+    public WishlistEntity getWishlistById(Long wishlistId) {
+        return wishlistRepository.findAccessibleWishlistsByIds(List.of(wishlistId), SecurityUtils.getCurrentUserEmail()).stream().findFirst()
+            .orElseThrow(() -> new NotFoundException("Cannot find or forbidden access to wishlist with ID: " + wishlistId));
+    }
 
     public boolean deleteWishlist(Long wishlistId) {
         Optional<WishlistEntity> existingWishlist = wishlistRepository.findById(wishlistId);
+
         if (existingWishlist.isPresent()) {
+            checkOwner(existingWishlist.get());
+
             wishlistRepository.deleteById(wishlistId);
+
             return true;
         }
         return false;

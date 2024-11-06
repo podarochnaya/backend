@@ -227,4 +227,44 @@
     <changeSet id="4" author="boris">
         <dropColumn tableName="users" columnName="username"/>
     </changeSet>
+
+    <changeSet id="5"
+               author="boris">
+
+        <createTable tableName="users_gifts">
+            <column name="gift_id"
+                    type="BIGINT">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_users_gifts"/>
+            </column>
+            <column name="user_id"
+                    type="BIGINT">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_users_gifts"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="gift_id"
+                                 baseTableName="users_gifts"
+                                 constraintName="fk_usegif_on_gift_entity"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gift"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="users_gifts"
+                                 constraintName="fk_usegif_on_user_entity"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"
+                                 onDelete="CASCADE"/>
+
+
+        <addColumn tableName="gift">
+            <column name="visibility"
+                    type="VARCHAR(255)"/>
+        </addColumn>
+
+    </changeSet>
 </databaseChangeLog>
