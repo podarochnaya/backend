@@ -42,6 +42,6 @@ public class WishlistEntity extends BaseEntity {
     @OneToMany(mappedBy = "wishlist")
     private List<GiftEntity> gifts;
 
-    @ManyToMany(mappedBy = "wishlists")
-    private Set<UserEntity> users;
+    @ManyToMany(mappedBy = "visibleWishlists")
+    private Set<UserEntity> allowedUsers;
 }

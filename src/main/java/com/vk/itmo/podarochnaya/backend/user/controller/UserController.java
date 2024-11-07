@@ -40,4 +40,9 @@ public class UserController {
     public ResponseEntity<List<UserResponse>> listAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUser() {
+        return ResponseEntity.ok(userService.getMe());
+    }
 }

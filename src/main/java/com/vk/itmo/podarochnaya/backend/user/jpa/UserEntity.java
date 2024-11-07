@@ -3,6 +3,7 @@ package com.vk.itmo.podarochnaya.backend.user.jpa;
 import com.vk.itmo.podarochnaya.backend.common.jpa.BaseEntity;
 import com.vk.itmo.podarochnaya.backend.santa.jpa.SantaGroupEntity;
 import com.vk.itmo.podarochnaya.backend.santa.jpa.SantaPairEntity;
+import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,7 +50,15 @@ public class UserEntity extends BaseEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "wishlist_id")
     )
-    private Set<WishlistEntity> wishlists;
+    private Set<WishlistEntity> visibleWishlists;
+
+    @ManyToMany
+    @JoinTable(
+        name = "users_gifts",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "gift_id")
+    )
+    private Set<GiftEntity> visibleGifts;
 
     @ManyToMany
     @JoinTable(

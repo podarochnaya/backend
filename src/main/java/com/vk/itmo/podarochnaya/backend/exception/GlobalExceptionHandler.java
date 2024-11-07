@@ -1,20 +1,24 @@
 package com.vk.itmo.podarochnaya.backend.exception;
 
 import java.nio.file.AccessDeniedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-    private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -26,6 +30,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<Object> handleAccessDeniedException(final AccessDeniedException exception) {
+        logger.warn(exception.getMessage(), exception);
+        return buildErrorResponse(exception, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccessDeniedRuntimeException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Object> handleAccessDeniedRuntimeException(final AccessDeniedRuntimeException exception) {
         logger.warn(exception.getMessage(), exception);
         return buildErrorResponse(exception, HttpStatus.UNAUTHORIZED);
     }
@@ -59,13 +70,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> buildErrorResponse(
-            final Exception exception,
-            final HttpStatus httpStatus
+        final Exception exception,
+        final HttpStatus httpStatus
     ) {
         ErrorResponse errorResponse = new ErrorResponse(
-                httpStatus.name(),
-                exception.getMessage()
+            httpStatus.name(),
+            exception.getMessage()
         );
         return ResponseEntity.status(httpStatus).body(errorResponse);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        Map<String, String> validationErrors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+            validationErrors.put(error.getField(), error.getDefaultMessage())
+        );
+        String errorMessage = validationErrors.values().toString();
+        ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            errorMessage
+        );
+        return ResponseEntity.status(status).body(errorResponse);
     }
 }
