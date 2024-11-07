@@ -1,12 +1,17 @@
 package com.vk.itmo.podarochnaya.backend.santa.dto;
 
 import com.vk.itmo.podarochnaya.backend.user.dto.UserRef;
-import java.util.Date;
-import java.util.List;
+import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+import java.util.List;
+
 @Data
+@Builder
 public class SantaGroup {
+    private Long id;
+
     private String title;
 
     private UserRef owner;
