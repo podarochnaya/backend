@@ -20,6 +20,6 @@ public class Gift {
     private UserRef reserver;
     private GiftStatus status;
     private LocalDateTime createdAt;
-    private List<Long> allowedUserIds;
+    private List<UserRef> allowedUsers;
     private GiftVisibility visibility;
 }

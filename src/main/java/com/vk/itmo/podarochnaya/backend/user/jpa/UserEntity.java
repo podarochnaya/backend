@@ -3,6 +3,7 @@ package com.vk.itmo.podarochnaya.backend.user.jpa;
 import com.vk.itmo.podarochnaya.backend.common.jpa.BaseEntity;
 import com.vk.itmo.podarochnaya.backend.santa.jpa.SantaGroupEntity;
 import com.vk.itmo.podarochnaya.backend.santa.jpa.SantaPairEntity;
+import com.vk.itmo.podarochnaya.backend.user.dto.UserRef;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import jakarta.persistence.Column;
@@ -46,9 +47,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
     @ManyToMany
     @JoinTable(
-            name = "users_wishlists",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "wishlist_id")
+        name = "users_wishlists",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "wishlist_id")
     )
     private Set<WishlistEntity> visibleWishlists;
 
@@ -62,9 +63,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
     @ManyToMany
     @JoinTable(
-            name = "users_santa_groups",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "santa_group_id")
+        name = "users_santa_groups",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "santa_group_id")
     )
     private Set<SantaGroupEntity> santaGroups;
 
@@ -113,5 +114,12 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    public UserRef toRef() {
+        return new UserRef(
+            this.getId(),
+            this.getEmail()
+        );
     }
 }
