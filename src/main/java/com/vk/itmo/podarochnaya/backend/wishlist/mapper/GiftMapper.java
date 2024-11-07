@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -38,6 +39,10 @@ public interface GiftMapper {
 
     @Named("usersToRefs")
     default List<UserRef> mapUserEntitySetToRefList(Collection<UserEntity> users) {
+        if (users == null) {
+            return Collections.emptyList();
+        }
+
         return users.stream()
             .map(UserEntity::toRef)
             .toList();

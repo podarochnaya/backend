@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
     private static final String SECRET_KEY = "8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb";
-    private static final long JWT_EXPIRATION = Duration.of(1, ChronoUnit.HOURS).toMillis();
+    private static final long JWT_EXPIRATION = Duration.of(1, ChronoUnit.DAYS).toMillis();
 
     /**
      * Извлечение имени пользователя из токена
@@ -116,8 +116,8 @@ public class JwtService {
      */
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(getSigningKey()).build()
-                .parseClaimsJws(token)
-                .getBody();
+            .parseClaimsJws(token)
+            .getBody();
     }
 
     /**
