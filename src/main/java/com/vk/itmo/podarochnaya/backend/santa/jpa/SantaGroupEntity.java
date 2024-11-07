@@ -31,6 +31,11 @@ public class SantaGroupEntity extends BaseEntity {
     @OneToMany(mappedBy = "santaGroup")
     private List<SantaPairEntity> santaPairs;
 
-    @ManyToMany(mappedBy = "santaGroups")
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+        name = "users_santa_groups",
+        joinColumns = @JoinColumn(name = "santa_group_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private Set<UserEntity> users;
 }

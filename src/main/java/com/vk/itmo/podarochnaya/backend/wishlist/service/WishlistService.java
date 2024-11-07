@@ -50,9 +50,9 @@ public class WishlistService {
 
         WishlistEntity wishlistEntity = tx.execute(status -> wishlistRepository.save(wishlist));
 
-        if (CollectionUtils.isNotEmpty(wishlistCreateRequest.getGifts())) {
-            var wishlistId = wishlistEntity.getId();
+        var wishlistId = wishlistEntity.getId();
 
+        if (CollectionUtils.isNotEmpty(wishlistCreateRequest.getGifts())) {
             wishlistCreateRequest.getGifts()
                 .forEach(gift -> {
                     var fileBase64 = gift.getFile();
@@ -69,10 +69,9 @@ public class WishlistService {
                         )
                     );
                 });
-
-            wishlistEntity = wishlistRepository.findById(wishlistId)
-                .orElseThrow();
         }
+
+        wishlistEntity = tx.execute(status -> wishlistRepository.findById(wishlistId).orElseThrow());
 
         return mapper.toWishlist(wishlistEntity);
     }

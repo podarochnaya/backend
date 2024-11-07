@@ -3,11 +3,13 @@ package com.vk.itmo.podarochnaya.backend.wishlist.jpa;
 import com.vk.itmo.podarochnaya.backend.common.jpa.BaseEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.GiftRef;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
@@ -55,7 +57,12 @@ public class GiftEntity extends BaseEntity {
     @Column(name = "status")
     private GiftStatus status;
 
-    @ManyToMany(mappedBy = "visibleGifts")
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+        name = "users_gifts",
+        joinColumns = @JoinColumn(name = "gift_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private Set<UserEntity> allowedUsers;
 
     @Enumerated(EnumType.STRING)
