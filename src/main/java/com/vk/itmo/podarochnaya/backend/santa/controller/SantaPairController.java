@@ -1,11 +1,9 @@
 package com.vk.itmo.podarochnaya.backend.santa.controller;
 
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPair;
-import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPairRequest;
-import com.vk.itmo.podarochnaya.backend.santa.service.SantaPairService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPairCreateRequest;
+import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPairUpdateRequest;
+import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,14 +34,16 @@ public class SantaPairController {
     }
 
     @PostMapping
-    public ResponseEntity<SantaPair> createSantaPair(@RequestBody SantaPairRequest santaPair) {
+    public ResponseEntity<SantaPair> createSantaPair(
+        @RequestBody SantaPairCreateRequest santaPair
+    ) {
         throw new UnsupportedOperationException("createSantaPair is not implemented yet");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SantaPair> updateSantaPair(
-            @PathVariable Long id,
-            @RequestBody SantaPairRequest santaPair
+        @PathVariable Long id,
+        @RequestBody SantaPairUpdateRequest santaPair
     ) {
         throw new UnsupportedOperationException("updateSantaPair is not implemented yet");
     }

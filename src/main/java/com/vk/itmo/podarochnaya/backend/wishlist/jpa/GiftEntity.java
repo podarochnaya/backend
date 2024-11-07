@@ -4,15 +4,16 @@ import com.vk.itmo.podarochnaya.backend.common.jpa.BaseEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -47,6 +48,7 @@ public class GiftEntity extends BaseEntity {
     @JoinColumn(name = "reserver_user_id")
     private UserEntity reserver;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "status")
-    private int status;
+    private GiftStatus status;
 }

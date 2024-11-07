@@ -1,7 +1,9 @@
 package com.vk.itmo.podarochnaya.backend.santa.controller;
 
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroup;
-import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroupRequest;
+import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroupCreateRequest;
+import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroupUpdateRequest;
+import jakarta.validation.Valid;
 import java.util.List;
 
 import com.vk.itmo.podarochnaya.backend.santa.service.SantaGroupService;
@@ -40,14 +42,16 @@ public class SantaGroupController {
     }
 
     @PostMapping
-    public ResponseEntity<SantaGroup> createSantaGroup(@RequestBody SantaGroupRequest santaGroup) {
+    public SantaGroup createSantaGroup(
+        @Valid @RequestBody SantaGroupCreateRequest santaGroup
+    ) {
         return ResponseEntity.ok(map(santaGroupService.create(santaGroup)));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SantaGroup> updateSantaGroup(
         @PathVariable Long id,
-        @RequestBody SantaGroupRequest santaGroup
+        @Valid @RequestBody SantaGroupUpdateRequest santaGroup
     ) {
         return ResponseEntity.ok(map(santaGroupService.update(id, santaGroup)));
     }
