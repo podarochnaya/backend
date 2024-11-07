@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class GiftWithImageResponse {
-    private Gift gift;  // Метаданные подарка
-    private byte[] image;
+    private Gift gift;
+    private String image;
 }

@@ -18,6 +18,7 @@ import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistVisibility;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.GiftMapper;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +47,7 @@ public class GiftService {
         WishlistEntity wishlist = getWishlistById(wishlistId);
 
         String photoUrl = null;
-        if (image != null && !(image.getFileContent().length > 0)) {
+        if (image != null && image.getFileContent().length > 0) {
             photoUrl = giftImageService.uploadGiftImage(image);
         }
 
@@ -155,7 +156,7 @@ public class GiftService {
         GiftWithImageResponse response = new GiftWithImageResponse();
         if (giftEntity.getPhotoId() != null) {
             byte[] imageBytes = giftImageService.getFileAsBytes(giftEntity.getPhotoId());
-            response.setImage(imageBytes);
+            response.setImage(Base64.getEncoder().encodeToString(imageBytes));
         }
         response.setGift(gift);
         return response;
@@ -173,7 +174,7 @@ public class GiftService {
             GiftWithImageResponse response = new GiftWithImageResponse();
             if (giftEntity.getPhotoId() != null) {
                 byte[] imageBytes = giftImageService.getFileAsBytes(giftEntity.getPhotoId());
-                response.setImage(imageBytes);
+                response.setImage(Base64.getEncoder().encodeToString(imageBytes));
             }
             response.setGift(gift);
             responseList.add(response);

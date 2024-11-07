@@ -13,7 +13,7 @@ public class FileBase64Dto {
     private String fileName;
 
     @NotBlank
-    private String fileContentBase64;
+    private String fileContent;
 
     @NotBlank
     private String contentType;
