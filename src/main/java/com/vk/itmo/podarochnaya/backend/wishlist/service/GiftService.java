@@ -122,6 +122,7 @@ public class GiftService {
         return giftMapper.toGift(updatedGift);
     }
 
+    @Transactional
     public GiftWithImageResponse getGift(Long giftId) throws Exception {
         GiftEntity giftEntity = getGiftById(giftId);
 
@@ -135,7 +136,7 @@ public class GiftService {
         return response;
     }
 
-
+    @Transactional
     public List<GiftWithImageResponse> getGifts() throws Exception {
         var currentUser = userService.getAuthenticatedUser();
 
