@@ -16,7 +16,6 @@ public class Gift {
     private String url;
     private BigDecimal price;
     private boolean reserved;
-    private String photoId;
     private WishlistRef wishlist;
     private UserRef reserver;
     private GiftStatus status;

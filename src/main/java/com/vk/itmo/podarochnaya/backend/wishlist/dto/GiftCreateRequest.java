@@ -31,13 +31,8 @@ public class GiftCreateRequest {
 
     private boolean reserved;
 
-    @Size(max = 200, message = "Photo ID must be less than 100 characters")
-    private String photoId;
-
     @NotNull(message = "Wishlist ID is required")
     private Long wishlistId;
-
-    private Long reserverUserId;
 
     @NotNull(message = "Status is required")
     private GiftStatus status;

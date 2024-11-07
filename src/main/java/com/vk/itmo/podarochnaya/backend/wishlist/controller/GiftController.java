@@ -52,6 +52,11 @@ public class GiftController {
         return ResponseEntity.ok(giftService.updateGift(giftId, request, file));
     }
 
+    @PutMapping("reserve/{giftId}")
+    public ResponseEntity<Gift> updateGift(@PathVariable Long giftId) throws Exception {
+        return ResponseEntity.ok(giftService.reserveGift(giftId));
+    }
+
     @DeleteMapping("/{giftId}")
     public ResponseEntity<Void> deleteGift(@PathVariable Long giftId) throws Exception {
         giftService.deleteGift(giftId);

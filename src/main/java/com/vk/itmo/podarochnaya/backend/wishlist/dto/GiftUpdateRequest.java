@@ -27,11 +27,6 @@ public class GiftUpdateRequest {
 
     private Boolean reserved;
 
-    private Long reserverUserId;
-
-    @Size(max = 100, message = "Photo ID must be less than 100 characters")
-    private String photoId;
-
     private GiftStatus status;
 
     private List<Long> allowedUserIds;
