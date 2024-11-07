@@ -2,6 +2,7 @@ package com.vk.itmo.podarochnaya.backend.wishlist.jpa;
 
 import com.vk.itmo.podarochnaya.backend.common.jpa.BaseEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
+import com.vk.itmo.podarochnaya.backend.wishlist.dto.GiftRef;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -60,4 +61,8 @@ public class GiftEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "visibility")
     private GiftVisibility visibility;
+
+    public GiftRef toRef() {
+        return new GiftRef(this.getId(), this.getTitle());
+    }
 }

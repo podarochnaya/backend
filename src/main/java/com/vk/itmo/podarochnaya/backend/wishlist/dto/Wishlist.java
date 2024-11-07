@@ -17,4 +17,5 @@ public class Wishlist {
     private UserRef ownerUser;
     private LocalDateTime createdAt;
     private List<UserRef> allowedUsers;
+    private List<GiftRef> gifts;
 }

@@ -2,14 +2,16 @@ package com.vk.itmo.podarochnaya.backend.wishlist.service;
 
 import com.vk.itmo.podarochnaya.backend.exception.AccessDeniedRuntimeException;
 import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
-import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.service.UserService;
+import com.vk.itmo.podarochnaya.backend.wishlist.dto.FileDto;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.Wishlist;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.WishlistCreateRequest;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.WishlistUpdateRequest;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistRepository;
+import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistStatus;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.WishlistMapper;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -17,37 +19,53 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class WishlistService {
+    public static final byte[] EMPTY_BYTES = new byte[0];
     private final WishlistRepository wishlistRepository;
     private final GiftService giftService;
     private final UserService userService;
     private final WishlistMapper mapper;
+    private final PlatformTransactionManager transactionManager;
 
     public Wishlist createWishlist(WishlistCreateRequest wishlistCreateRequest) {
-        UserEntity user = userService.getByEmail(wishlistCreateRequest.getOwnerUserEmail());
+        var tx = new TransactionTemplate(transactionManager);
+
+        var currentUser = userService.getAuthenticatedUser();
 
         WishlistEntity wishlist = new WishlistEntity();
         wishlist.setTitle(wishlistCreateRequest.getTitle().trim());
         wishlist.setDescription(wishlistCreateRequest.getDescription().trim());
-        wishlist.setStatus(wishlistCreateRequest.getStatus());
-        wishlist.setOwner(user);
+        wishlist.setStatus(WishlistStatus.OPENED);
+        wishlist.setOwner(currentUser);
         wishlist.setVisibility(wishlistCreateRequest.getVisibility());
         wishlist.setAllowedUsers(new HashSet<>(userService.getByEmails(wishlistCreateRequest.getAllowedUserEmails())));
 
-        WishlistEntity wishlistEntity = wishlistRepository.save(wishlist);
+        WishlistEntity wishlistEntity = tx.execute(status -> wishlistRepository.save(wishlist));
 
-        if (!CollectionUtils.isNotEmpty(wishlistCreateRequest.getGifts())) {
+        if (CollectionUtils.isNotEmpty(wishlistCreateRequest.getGifts())) {
             var wishlistId = wishlistEntity.getId();
 
             wishlistCreateRequest.getGifts()
-                .forEach(gift -> giftService.createGift(
-                    wishlistId,
-                    gift,
-                    gift.getFile()
-                ));
+                .forEach(gift -> {
+                    var fileBase64 = gift.getFile();
+
+                    giftService.createGift(
+                        wishlistId,
+                        gift,
+                        new FileDto(
+                            fileBase64.getFileName(),
+                            Optional.ofNullable(fileBase64.getFileContentBase64())
+                                .map(it -> Base64.getDecoder().decode(it))
+                                .orElse(EMPTY_BYTES),
+                            fileBase64.getContentType()
+                        )
+                    );
+                });
 
             wishlistEntity = wishlistRepository.findById(wishlistId)
                 .orElseThrow();
@@ -66,12 +84,6 @@ public class WishlistService {
         WishlistEntity wishlist = getWishlistById(wishlistId);
 
         checkOwner(wishlist);
-
-        if (wishlistUpdateRequest.getOwnerUserEmail() != null) {
-            UserEntity user = userService.getByEmail(wishlistUpdateRequest.getOwnerUserEmail());
-
-            wishlist.setOwner(user);
-        }
 
         if (wishlistUpdateRequest.getTitle() != null) {
             wishlist.setTitle(wishlistUpdateRequest.getTitle().trim());

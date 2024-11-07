@@ -8,11 +8,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FileDto {
+public class FileBase64Dto {
     @NotBlank
     private String fileName;
 
-    private byte[] fileContent;
+    @NotBlank
+    private String fileContentBase64;
 
     @NotBlank
     private String contentType;

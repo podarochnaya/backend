@@ -8,5 +8,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class GiftCreateEmbeddedRequest extends GiftCreateBaseRequest {
     @NotNull
-    private FileDto file;
+    private FileBase64Dto file;
 }

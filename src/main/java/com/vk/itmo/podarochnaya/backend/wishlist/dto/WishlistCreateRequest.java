@@ -1,6 +1,5 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.dto;
 
-import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistStatus;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistVisibility;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -19,13 +18,6 @@ public class WishlistCreateRequest {
     @NotBlank(message = "Description is required")
     @Size(max = 500, message = "Description must be at most 500 characters")
     private String description;
-
-    @NotNull(message = "Status is required")
-    private WishlistStatus status;
-
-    @Email
-    @NotNull(message = "Owner user Email is required")
-    private String ownerUserEmail;
 
     @NotNull(message = "Visibility is required")
     private WishlistVisibility visibility;
