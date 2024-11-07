@@ -2,7 +2,12 @@ package com.vk.itmo.podarochnaya.backend.wishlist.jpa;
 
 import com.vk.itmo.podarochnaya.backend.common.jpa.BaseEntity;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
