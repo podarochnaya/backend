@@ -10,6 +10,7 @@ import com.vk.itmo.podarochnaya.backend.wishlist.dto.WishlistUpdateRequest;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistStatus;
+import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistVisibility;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.WishlistMapper;
 import java.util.Base64;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
@@ -32,6 +34,7 @@ public class WishlistService {
     private final WishlistMapper mapper;
     private final PlatformTransactionManager transactionManager;
 
+    @Transactional
     public Wishlist createWishlist(WishlistCreateRequest wishlistCreateRequest) {
         var tx = new TransactionTemplate(transactionManager);
 
@@ -42,7 +45,7 @@ public class WishlistService {
         wishlist.setDescription(wishlistCreateRequest.getDescription().trim());
         wishlist.setStatus(WishlistStatus.OPENED);
         wishlist.setOwner(currentUser);
-        wishlist.setVisibility(wishlistCreateRequest.getVisibility());
+        wishlist.setVisibility(Objects.requireNonNullElse(wishlistCreateRequest.getVisibility(), WishlistVisibility.PUBLIC));
         wishlist.setAllowedUsers(new HashSet<>(userService.getByEmails(wishlistCreateRequest.getAllowedUserEmails())));
 
         WishlistEntity wishlistEntity = tx.execute(status -> wishlistRepository.save(wishlist));
@@ -74,12 +77,14 @@ public class WishlistService {
         return mapper.toWishlist(wishlistEntity);
     }
 
+    @Transactional(readOnly = true)
     public List<Wishlist> getAllWishlists() {
         var currentUser = userService.getAuthenticatedUser();
 
         return mapper.toWishlists(wishlistRepository.findAllAccessibleWishlists(currentUser.getId()));
     }
 
+    @Transactional
     public Wishlist updateWishlist(Long wishlistId, WishlistUpdateRequest wishlistUpdateRequest) {
         WishlistEntity wishlist = getWishlistById(wishlistId);
 
