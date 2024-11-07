@@ -2,6 +2,7 @@ package com.vk.itmo.podarochnaya.backend.wishlist.service;
 
 import com.vk.itmo.podarochnaya.backend.exception.AccessDeniedRuntimeException;
 import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
+import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.service.UserService;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.FileDto;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.Gift;
@@ -14,11 +15,17 @@ import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftStatus;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftVisibility;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistRepository;
+import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistVisibility;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.GiftMapper;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,6 +50,24 @@ public class GiftService {
             photoUrl = giftImageService.uploadGiftImage(image);
         }
 
+        var allowedEmails = Stream.of(
+                Objects.requireNonNullElse(wishlist.getAllowedUsers(), new ArrayList<UserEntity>()).stream().map(UserEntity::getEmail),
+                Optional.ofNullable(giftCreateRequest.getAllowedUserEmails()).stream().flatMap(Collection::stream),
+                Optional.ofNullable(wishlist.getOwner()).stream().map(UserEntity::getEmail)
+            )
+            .flatMap(Function.identity())
+            .collect(Collectors.toSet());
+
+        var allowedUsers = new HashSet<>(userService.getByEmails(allowedEmails));
+
+        var visibility = GiftVisibility.PUBLIC;
+
+        if (giftCreateRequest.getVisibility() != null) {
+            visibility = giftCreateRequest.getVisibility();
+        } else if (wishlist.getVisibility() != null && wishlist.getVisibility() == WishlistVisibility.PRIVATE) {
+            visibility = GiftVisibility.PRIVATE;
+        }
+
         GiftEntity giftEntity = new GiftEntity()
             .setTitle(giftCreateRequest.getTitle())
             .setDescription(giftCreateRequest.getDescription())
@@ -50,9 +75,9 @@ public class GiftService {
             .setPrice(giftCreateRequest.getPrice())
             .setReserved(giftCreateRequest.isReserved())
             .setStatus(Objects.requireNonNullElse(giftCreateRequest.getStatus(), GiftStatus.OPEN))
-            .setVisibility(Objects.requireNonNullElse(giftCreateRequest.getVisibility(), GiftVisibility.PUBLIC))
+            .setVisibility(visibility)
             .setWishlist(wishlist)
-            .setAllowedUsers(new HashSet<>(userService.getByEmails(giftCreateRequest.getAllowedUserEmails())))
+            .setAllowedUsers(allowedUsers)
             .setPhotoId(photoUrl);
 
         return giftMapper.toGift(giftRepository.save(giftEntity));

@@ -16,7 +16,8 @@ public interface WishlistRepository extends JpaRepository<WishlistEntity, Long> 
             EXISTS (
                 SELECT 1
                 FROM UserEntity u
-                WHERE u.id = :userId AND u MEMBER OF w.allowedUsers
+                WHERE u.id = :userId
+                AND (u MEMBER OF w.allowedUsers OR w.owner = u)
             )
         )
         """)
@@ -31,7 +32,8 @@ public interface WishlistRepository extends JpaRepository<WishlistEntity, Long> 
         EXISTS (
             SELECT 1
             FROM UserEntity u
-            WHERE u.id = :userId AND u MEMBER OF w.allowedUsers
+            WHERE u.id = :userId
+            AND (u MEMBER OF w.allowedUsers OR w.owner = u)
         )
         """)
         //TODO Refactor to use user id instead if email

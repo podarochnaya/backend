@@ -16,7 +16,9 @@ public interface GiftRepository extends JpaRepository<GiftEntity, Long> {
             EXISTS (
                 SELECT 1
                 FROM UserEntity u
-                WHERE u.id = :userId AND u MEMBER OF g.allowedUsers
+                LEFT JOIN WishlistEntity w ON u = w.owner
+                WHERE u.id = :userId
+                AND (u MEMBER OF g.allowedUsers OR g MEMBER OF w.gifts)
             )
         )
         """)
@@ -29,9 +31,11 @@ public interface GiftRepository extends JpaRepository<GiftEntity, Long> {
         g.visibility = com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftVisibility.PUBLIC
         OR
         EXISTS (
-            SELECT 1
-            FROM UserEntity u
-            WHERE u.id = :userId AND u MEMBER OF g.allowedUsers
+                SELECT 1
+                FROM UserEntity u
+                LEFT JOIN WishlistEntity w ON u = w.owner
+                WHERE u.id = :userId
+                AND (u MEMBER OF g.allowedUsers OR g MEMBER OF w.gifts)
         )
         """)
     List<GiftEntity> findAllAccessibleGifts(@Param("userId") long userId);
