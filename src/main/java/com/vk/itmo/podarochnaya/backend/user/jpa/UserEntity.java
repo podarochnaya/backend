@@ -6,10 +6,9 @@ import com.vk.itmo.podarochnaya.backend.santa.jpa.SantaPairEntity;
 import com.vk.itmo.podarochnaya.backend.user.dto.UserRef;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -45,28 +44,13 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "birthday")
     private Date birthday;
 
-    @ManyToMany
-    @JoinTable(
-        name = "users_wishlists",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "wishlist_id")
-    )
+    @ManyToMany(mappedBy = "allowedUsers", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<WishlistEntity> visibleWishlists;
 
-    @ManyToMany
-    @JoinTable(
-        name = "users_gifts",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "gift_id")
-    )
+    @ManyToMany(mappedBy = "allowedUsers", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<GiftEntity> visibleGifts;
 
-    @ManyToMany
-    @JoinTable(
-        name = "users_santa_groups",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "santa_group_id")
-    )
+    @ManyToMany(mappedBy = "users", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<SantaGroupEntity> santaGroups;
 
     @OneToMany(mappedBy = "owner")
