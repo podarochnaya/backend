@@ -5,6 +5,7 @@ import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistVisibility;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -25,4 +26,6 @@ public class WishlistCreateRequest {
 
     @NotNull(message = "Visibility is required")
     private WishlistVisibility visibility;
+
+    private List<Long> allowedUserIds;
 }

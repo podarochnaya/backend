@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -32,4 +33,6 @@ public class GiftUpdateRequest {
     private String photoId;
 
     private GiftStatus status;
+
+    private List<Long> allowedUserIds;
 }
