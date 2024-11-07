@@ -11,6 +11,7 @@ import com.vk.itmo.podarochnaya.backend.wishlist.dto.GiftWithImageResponse;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftStatus;
+import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftVisibility;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.GiftMapper;
@@ -49,6 +50,7 @@ public class GiftService {
             .setPrice(giftCreateRequest.getPrice())
             .setReserved(giftCreateRequest.isReserved())
             .setStatus(Objects.requireNonNullElse(giftCreateRequest.getStatus(), GiftStatus.OPEN))
+            .setVisibility(Objects.requireNonNullElse(giftCreateRequest.getVisibility(), GiftVisibility.PUBLIC))
             .setWishlist(wishlist)
             .setAllowedUsers(new HashSet<>(userService.getByEmails(giftCreateRequest.getAllowedUserEmails())))
             .setPhotoId(photoUrl);
@@ -84,6 +86,10 @@ public class GiftService {
 
         if (giftUpdateRequest.getReserved() != null) {
             giftEntity.setReserved(giftUpdateRequest.getReserved());
+        }
+
+        if (giftUpdateRequest.getVisibility() != null) {
+            giftEntity.setVisibility(giftUpdateRequest.getVisibility());
         }
 
         if (file != null && file.getFileContent().length > 0) {

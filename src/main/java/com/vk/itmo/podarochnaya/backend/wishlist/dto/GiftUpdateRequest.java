@@ -1,6 +1,7 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.dto;
 
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftStatus;
+import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftVisibility;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -31,4 +32,6 @@ public class GiftUpdateRequest {
     private GiftStatus status;
 
     private List<@Email String> allowedUserEmails;
+
+    private GiftVisibility visibility;
 }
