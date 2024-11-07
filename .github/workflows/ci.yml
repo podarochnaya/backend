@@ -82,3 +82,11 @@ jobs:
       - name: Push Docker image
         run: |
           docker push l1zail/podarochnaya-backend:${{ env.COMMIT_HASH }}
+
+      - name: Tag Docker image as latest
+        run: |
+          docker tag l1zail/podarochnaya-backend:${{ env.COMMIT_HASH }} l1zail/podarochnaya-backend:latest
+
+      - name: Push Docker image as latest
+        run: |
+          docker push l1zail/podarochnaya-backend:latest
