@@ -16,12 +16,11 @@ public interface GiftRepository extends JpaRepository<GiftEntity, Long> {
             EXISTS (
                 SELECT 1
                 FROM UserEntity u
-                WHERE u.email = :userEmail AND u MEMBER OF g.allowedUsers
+                WHERE u.id = :userId AND u MEMBER OF g.allowedUsers
             )
         )
         """)
-        //TODO Refactor to use user id instead if email
-    List<GiftEntity> findAccessibleGiftsByIds(@Param("giftIds") List<Long> giftIds, @Param("userEmail") String userEmail);
+    List<GiftEntity> findAccessibleGiftsByIds(@Param("giftIds") List<Long> giftIds, @Param("userId") long userId);
 
     @Query("""
         SELECT g
@@ -32,9 +31,8 @@ public interface GiftRepository extends JpaRepository<GiftEntity, Long> {
         EXISTS (
             SELECT 1
             FROM UserEntity u
-            WHERE u.email = :userEmail AND u MEMBER OF g.allowedUsers
+            WHERE u.id = :userId AND u MEMBER OF g.allowedUsers
         )
         """)
-        //TODO Refactor to use user id instead if email
-    List<GiftEntity> findAllAccessibleGifts(@Param("userEmail") String userEmail);
+    List<GiftEntity> findAllAccessibleGifts(@Param("userId") long userId);
 }

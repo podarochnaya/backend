@@ -13,8 +13,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -89,8 +87,8 @@ public class UserService {
 
     public Long deleteById(Long userId) {
         UserEntity authenticatedUser = getAuthenticatedUser();
-        UserEntity userEntity =  repository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        UserEntity userEntity = repository.findById(userId)
+            .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         if (!authenticatedUser.getEmail().equals(userEntity.getEmail())) {
             throw new AccessDeniedException("Вы не имеете права удалять этот аккаунт");
         }
@@ -104,8 +102,8 @@ public class UserService {
 
     public UserResponse updateUserById(Long userId, UserUpdateRequest userRequest) {
         UserEntity authenticatedUser = getAuthenticatedUser();
-        UserEntity userEntity =  repository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        UserEntity userEntity = repository.findById(userId)
+            .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         if (!authenticatedUser.getEmail().equals(userEntity.getEmail())) {
             throw new AccessDeniedException("Вы не имеете права изменять этот аккаунт");
@@ -131,10 +129,10 @@ public class UserService {
         return mapper.toUserResponse(updatedUser);
     }
 
-    private UserEntity getAuthenticatedUser() {
+    public UserEntity getAuthenticatedUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
-            return (UserEntity) principal;
+            return (UserEntity)principal;
         } else {
             throw new AccessDeniedException("Не удалось определить пользователя");
         }
@@ -142,7 +140,7 @@ public class UserService {
 
     public UserResponse getMe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserEntity currentUser = (UserEntity) authentication.getPrincipal();
+        UserEntity currentUser = (UserEntity)authentication.getPrincipal();
         return mapper.toUserResponse(currentUser);
     }
 }

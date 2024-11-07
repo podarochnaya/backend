@@ -1,6 +1,5 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.service;
 
-import com.vk.itmo.podarochnaya.backend.auth.utils.SecurityUtils;
 import com.vk.itmo.podarochnaya.backend.exception.AccessDeniedRuntimeException;
 import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
 import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
@@ -41,7 +40,9 @@ public class WishlistService {
     }
 
     public List<Wishlist> getAllWishlists() {
-        return mapper.toWishlists(wishlistRepository.findAllAccessibleWishlists(SecurityUtils.getCurrentUserEmail()));
+        var currentUser = userService.getAuthenticatedUser();
+
+        return mapper.toWishlists(wishlistRepository.findAllAccessibleWishlists(currentUser.getId()));
     }
 
     public Wishlist updateWishlist(Long wishlistId, WishlistUpdateRequest wishlistUpdateRequest) {
@@ -82,20 +83,24 @@ public class WishlistService {
         return mapper.toWishlist(wishlistRepository.save(wishlist));
     }
 
-    private static void checkOwner(WishlistEntity wishlist) {
-        var currentUserEmail = SecurityUtils.getCurrentUserEmail();
+    private void checkOwner(WishlistEntity wishlist) {
+        var currentUser = userService.getAuthenticatedUser();
 
-        if (!Objects.equals(wishlist.getOwner().getEmail(), currentUserEmail)) {
-            throw new AccessDeniedRuntimeException(currentUserEmail + " is not the owner of wishlist " + wishlist.getId());
+        if (!Objects.equals(wishlist.getOwner().getId(), currentUser.getId())) {
+            throw new AccessDeniedRuntimeException(currentUser.getEmail() + " is not the owner of wishlist " + wishlist.getId());
         }
     }
 
     public List<WishlistEntity> getWishlistsByIds(List<Long> wishlistIds) {
-        return wishlistRepository.findAccessibleWishlistsByIds(wishlistIds, SecurityUtils.getCurrentUserEmail());
+        var currentUser = userService.getAuthenticatedUser();
+
+        return wishlistRepository.findAccessibleWishlistsByIds(wishlistIds, currentUser.getId());
     }
 
     public WishlistEntity getWishlistById(Long wishlistId) {
-        return wishlistRepository.findAccessibleWishlistsByIds(List.of(wishlistId), SecurityUtils.getCurrentUserEmail()).stream().findFirst()
+        var currentUser = userService.getAuthenticatedUser();
+
+        return wishlistRepository.findAccessibleWishlistsByIds(List.of(wishlistId), currentUser.getId()).stream().findFirst()
             .orElseThrow(() -> new NotFoundException("Cannot find or forbidden access to wishlist with ID: " + wishlistId));
     }
 

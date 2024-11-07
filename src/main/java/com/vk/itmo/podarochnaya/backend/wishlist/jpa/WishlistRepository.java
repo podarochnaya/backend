@@ -16,12 +16,11 @@ public interface WishlistRepository extends JpaRepository<WishlistEntity, Long> 
             EXISTS (
                 SELECT 1
                 FROM UserEntity u
-                WHERE u.email = :userEmail AND u MEMBER OF w.allowedUsers
+                WHERE u.id = :userId AND u MEMBER OF w.allowedUsers
             )
         )
         """)
-        //TODO Refactor to use user id instead if email
-    List<WishlistEntity> findAccessibleWishlistsByIds(@Param("wishlistIds") List<Long> wishlistIds, @Param("userEmail") String userEmail);
+    List<WishlistEntity> findAccessibleWishlistsByIds(@Param("wishlistIds") List<Long> wishlistIds, @Param("userId") long userId);
 
     @Query("""
         SELECT w
@@ -32,9 +31,9 @@ public interface WishlistRepository extends JpaRepository<WishlistEntity, Long> 
         EXISTS (
             SELECT 1
             FROM UserEntity u
-            WHERE u.email = :userEmail AND u MEMBER OF w.allowedUsers
+            WHERE u.id = :userId AND u MEMBER OF w.allowedUsers
         )
         """)
         //TODO Refactor to use user id instead if email
-    List<WishlistEntity> findAllAccessibleWishlists(@Param("userEmail") String userEmail);
+    List<WishlistEntity> findAllAccessibleWishlists(@Param("userId") long userId);
 }

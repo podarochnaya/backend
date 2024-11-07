@@ -1,9 +1,7 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.service;
 
-import com.vk.itmo.podarochnaya.backend.auth.utils.SecurityUtils;
 import com.vk.itmo.podarochnaya.backend.exception.AccessDeniedRuntimeException;
 import com.vk.itmo.podarochnaya.backend.exception.NotFoundException;
-import com.vk.itmo.podarochnaya.backend.user.jpa.UserEntity;
 import com.vk.itmo.podarochnaya.backend.user.service.UserService;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.Gift;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.GiftCreateRequest;
@@ -38,8 +36,6 @@ public class GiftService {
     public Gift createGift(GiftCreateRequest giftCreateRequest, MultipartFile image) throws Exception {
         WishlistEntity wishlist = wishlistService.getWishlistById(giftCreateRequest.getWishlistId());
 
-        UserEntity user = userService.getById(giftCreateRequest.getReserverUserId());
-
         String photoUrl = null;
         if (image != null && !image.isEmpty()) {
             photoUrl = giftImageService.uploadGiftImage(image);
@@ -53,7 +49,6 @@ public class GiftService {
             .setReserved(giftCreateRequest.isReserved())
             .setStatus(giftCreateRequest.getStatus())
             .setWishlist(wishlist)
-            .setReserver(user)
             .setAllowedUsers(new HashSet<>(userService.getByIds(giftCreateRequest.getAllowedUserIds())))
             .setPhotoId(photoUrl);
 
@@ -65,12 +60,6 @@ public class GiftService {
         GiftEntity giftEntity = getGiftById(giftId);
 
         checkOwner(giftEntity);
-
-        if (giftUpdateRequest.getReserverUserId() != null) {
-            UserEntity user = userService.getById(giftUpdateRequest.getReserverUserId());
-
-            giftEntity.setReserver(user);
-        }
 
         if (giftUpdateRequest.getTitle() != null) {
             giftEntity.setTitle(giftUpdateRequest.getTitle().trim());
@@ -113,6 +102,19 @@ public class GiftService {
         return giftMapper.toGift(updatedGift);
     }
 
+    @Transactional
+    public Gift reserveGift(Long giftId) throws Exception {
+        GiftEntity giftEntity = getGiftById(giftId);
+
+        var currentUser = userService.getAuthenticatedUser();
+
+        giftEntity.setReserver(currentUser);
+        giftEntity.setReserved(true);
+
+        GiftEntity updatedGift = giftRepository.save(giftEntity);
+        return giftMapper.toGift(updatedGift);
+    }
+
     public GiftWithImageResponse getGift(Long giftId) throws Exception {
         GiftEntity giftEntity = getGiftById(giftId);
 
@@ -128,7 +130,9 @@ public class GiftService {
 
 
     public List<GiftWithImageResponse> getGifts() throws Exception {
-        List<GiftEntity> giftEntities = giftRepository.findAllAccessibleGifts(SecurityUtils.getCurrentUserEmail());
+        var currentUser = userService.getAuthenticatedUser();
+
+        List<GiftEntity> giftEntities = giftRepository.findAllAccessibleGifts(currentUser.getId());
         List<GiftWithImageResponse> responseList = new ArrayList<>();
 
         for (GiftEntity giftEntity : giftEntities) {
@@ -145,20 +149,25 @@ public class GiftService {
     }
 
     public List<GiftEntity> getGiftsByIds(List<Long> giftIds) {
-        return giftRepository.findAccessibleGiftsByIds(giftIds, SecurityUtils.getCurrentUserEmail());
+        var currentUser = userService.getAuthenticatedUser();
+
+        return giftRepository.findAccessibleGiftsByIds(giftIds, currentUser.getId());
     }
 
     public GiftEntity getGiftById(Long giftId) throws Exception {
-        return giftRepository.findAccessibleGiftsByIds(List.of(giftId), SecurityUtils.getCurrentUserEmail()).stream().findFirst()
+        var currentUser = userService.getAuthenticatedUser();
+
+        return giftRepository.findAccessibleGiftsByIds(List.of(giftId), currentUser.getId()).stream().findFirst()
             .orElseThrow(() -> new NotFoundException("Cannot find or forbidden access to gift with ID: " + giftId));
     }
 
-    private static void checkOwner(GiftEntity giftEntity) {
-        var currentUserEmail = SecurityUtils.getCurrentUserEmail();
+    private void checkOwner(GiftEntity giftEntity) {
+        var currentUser = userService.getAuthenticatedUser();
+
         WishlistEntity wishlist = giftEntity.getWishlist();
 
-        if (!Objects.equals(wishlist.getOwner().getEmail(), currentUserEmail)) {
-            throw new AccessDeniedRuntimeException(currentUserEmail + " is not the owner of wishlist " + wishlist.getId());
+        if (!Objects.equals(wishlist.getOwner().getId(), currentUser.getId())) {
+            throw new AccessDeniedRuntimeException(currentUser.getEmail() + " is not the owner of wishlist " + wishlist.getId());
         }
     }
 
