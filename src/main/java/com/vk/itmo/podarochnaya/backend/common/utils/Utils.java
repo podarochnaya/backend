@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class Utils {
-    public static List<Long> getIdList(Collection<UserEntity> users) {
-        return users.stream()
+    public static List<Long> getIdList(Collection<BaseEntity> entities) {
+        return entities.stream()
             .map(BaseEntity::getId)
             .toList();
     }
