@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GiftCreateRequest extends GiftCreateBaseRequest {
-    @NotNull(message = "Wishlist ID is required")
-    private Long wishlistId;
+public class GiftCreateEmbeddedRequest extends GiftCreateBaseRequest {
+    @NotNull
+    private FileBase64Dto file;
 }

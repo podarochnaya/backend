@@ -16,11 +16,10 @@ public class Gift {
     private String url;
     private BigDecimal price;
     private boolean reserved;
-    private String photoId;
     private WishlistRef wishlist;
     private UserRef reserver;
     private GiftStatus status;
     private LocalDateTime createdAt;
-    private List<Long> allowedUserIds;
+    private List<UserRef> allowedUsers;
     private GiftVisibility visibility;
 }

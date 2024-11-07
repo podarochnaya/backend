@@ -42,6 +42,12 @@ services:
       - minio_data:/data
     networks:
       - app-network
+  frontend:
+    image: l1zail/podarochnaya-frontend:latest
+    ports:
+      - "5173:5173"
+    networks:
+      - app-network
 
 networks:
   app-network:
