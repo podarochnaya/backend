@@ -5,12 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
+import java.util.Date;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
-public class UserUpdateRequest {
+public class UserCreateRequest {
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email must be a valid email address")
     private String email;

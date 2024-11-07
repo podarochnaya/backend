@@ -1,7 +1,8 @@
 package com.vk.itmo.podarochnaya.backend.santa.controller;
 
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPair;
-import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPairRequest;
+import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPairCreateRequest;
+import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPairUpdateRequest;
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class SantaPairController {
 
     @PostMapping
     public SantaPair createSantaPair(
-        @RequestBody SantaPairRequest santaPair
+        @RequestBody SantaPairCreateRequest santaPair
     ) {
         throw new UnsupportedOperationException("createSantaPair is not implemented yet");
     }
@@ -38,7 +39,7 @@ public class SantaPairController {
     @PutMapping("/{id}")
     public SantaPair updateSantaPair(
         @PathVariable Long id,
-        @RequestBody SantaPairRequest santaPair
+        @RequestBody SantaPairUpdateRequest santaPair
     ) {
         throw new UnsupportedOperationException("updateSantaPair is not implemented yet");
     }

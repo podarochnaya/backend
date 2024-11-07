@@ -1,9 +1,9 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.dto;
 
 import com.vk.itmo.podarochnaya.backend.user.dto.UserRef;
-import lombok.Data;
-
+import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftStatus;
 import java.time.LocalDateTime;
+import lombok.Data;
 
 @Data
 public class Gift {
@@ -16,6 +16,6 @@ public class Gift {
     private String photoId;
     private WishlistRef wishlist;
     private UserRef reserver;
-    private int status;
+    private GiftStatus status;
     private LocalDateTime createdAt;
 }

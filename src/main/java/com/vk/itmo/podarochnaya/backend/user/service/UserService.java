@@ -30,8 +30,8 @@ public class UserService {
      *
      * @return сохраненный пользователь
      */
-    public UserEntity save(UserEntity UserEntity) {
-        return repository.save(UserEntity);
+    public UserEntity save(UserEntity userEntity) {
+        return repository.save(userEntity);
     }
 
     /**
@@ -54,7 +54,12 @@ public class UserService {
      */
     public UserEntity getByUsername(String email) {
         return repository.findByEmail(email)
-            .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+            .orElseThrow(() -> new NotFoundException("User not found with email: " + email));
+    }
+
+    public UserEntity getById(long id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
     }
 
     /**
@@ -68,11 +73,6 @@ public class UserService {
         return this::getByUsername;
     }
 
-    public UserResponse getById(Long userId) {
-        UserEntity userEntity =  repository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        return mapper.toUserResponse(userEntity);
-    }
 
     public Long deleteById(Long userId) {
         UserEntity authenticatedUser = getAuthenticatedUser();
