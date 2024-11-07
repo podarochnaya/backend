@@ -13,7 +13,10 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -135,5 +138,11 @@ public class UserService {
         } else {
             throw new AccessDeniedException("Не удалось определить пользователя");
         }
+    }
+
+    public UserResponse getMe() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity currentUser = (UserEntity) authentication.getPrincipal();
+        return mapper.toUserResponse(currentUser);
     }
 }
