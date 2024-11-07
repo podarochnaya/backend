@@ -10,6 +10,8 @@ import java.util.List;
 @Data
 @Builder
 public class SantaGroup {
+    private Long id;
+
     private String title;
 
     private UserRef owner;

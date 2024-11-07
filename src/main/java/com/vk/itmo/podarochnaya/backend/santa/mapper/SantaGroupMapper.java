@@ -2,6 +2,7 @@ package com.vk.itmo.podarochnaya.backend.santa.mapper;
 
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroup;
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroupRef;
+import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroupStatus;
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPair;
 import com.vk.itmo.podarochnaya.backend.santa.jpa.SantaGroupEntity;
 import com.vk.itmo.podarochnaya.backend.santa.jpa.SantaPairEntity;
@@ -13,12 +14,13 @@ import org.springframework.stereotype.Component;
 public class SantaGroupMapper {
     public static SantaGroup map(SantaGroupEntity entity) {
         return SantaGroup.builder()
+                .id(entity.getId())
                 .owner(map(entity.getOwner()))
                 .title(entity.getTitle())
                 .users(entity.getUsers().stream().map(SantaGroupMapper::map).toList())
                 .expiration(entity.getExpiration())
                 .santaPairs(entity.getSantaPairs().stream().map(SantaGroupMapper::map).toList())
-                .status(String.valueOf(entity.getStatus()))
+                .status(SantaGroupStatus.fromStatus(entity.getStatus()))
                 .build();
     }
 

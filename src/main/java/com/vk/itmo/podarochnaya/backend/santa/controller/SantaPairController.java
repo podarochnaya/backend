@@ -3,7 +3,10 @@ package com.vk.itmo.podarochnaya.backend.santa.controller;
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPair;
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPairCreateRequest;
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaPairUpdateRequest;
-import java.util.List;
+import com.vk.itmo.podarochnaya.backend.santa.service.SantaPairService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,29 +37,26 @@ public class SantaPairController {
     }
 
     @PostMapping
-    public ResponseEntity<SantaPair> createSantaPair(
-        @RequestBody SantaPairCreateRequest santaPair
-    ) {
-        throw new UnsupportedOperationException("createSantaPair is not implemented yet");
+    public ResponseEntity<SantaPair> createSantaPair(@RequestBody SantaPairCreateRequest santaPair) {
+        return ResponseEntity.ok(santaPairService.create(santaPair));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SantaPair> updateSantaPair(
-        @PathVariable Long id,
-        @RequestBody SantaPairUpdateRequest santaPair
+            @PathVariable Long id,
+            @RequestBody SantaPairUpdateRequest santaPair
     ) {
-        throw new UnsupportedOperationException("updateSantaPair is not implemented yet");
+        return ResponseEntity.ok(santaPairService.update(id, santaPair));
     }
 
     @PostMapping("distribute-free/{id}")
-    public ResponseEntity<SantaPair> distributeFreeUsersToSantaPairs(@PathVariable Long id) {
-        throw new UnsupportedOperationException("distributeFreeUsersToSantaPairs is not implemented yet");
+    public ResponseEntity<List<SantaPair>> distributeFreeUsersToSantaPairs(@PathVariable Long id) {
+        return ResponseEntity.ok(santaPairService.distribute(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteSantaPair(
-            @PathVariable Long id
-    ) {
-        throw new UnsupportedOperationException("deleteSantaPair is not implemented yet");
+    public ResponseEntity<?> deleteSantaPair(@PathVariable Long id) {
+        santaPairService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }

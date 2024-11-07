@@ -3,10 +3,8 @@ package com.vk.itmo.podarochnaya.backend.santa.controller;
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroup;
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroupCreateRequest;
 import com.vk.itmo.podarochnaya.backend.santa.dto.SantaGroupUpdateRequest;
-import jakarta.validation.Valid;
-import java.util.List;
-
 import com.vk.itmo.podarochnaya.backend.santa.service.SantaGroupService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import static com.vk.itmo.podarochnaya.backend.santa.mapper.SantaGroupMapper.map;
 
 @RestController
@@ -28,9 +28,7 @@ public class SantaGroupController {
     private final SantaGroupService santaGroupService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<SantaGroup> getSantaGroupById(
-        @PathVariable Long id
-    ) {
+    public ResponseEntity<SantaGroup> getSantaGroupById(@PathVariable Long id) {
         return santaGroupService.getById(id).isPresent()
                 ? ResponseEntity.ok(santaGroupService.getById(id).get())
                 : ResponseEntity.notFound().build();
@@ -42,16 +40,16 @@ public class SantaGroupController {
     }
 
     @PostMapping
-    public SantaGroup createSantaGroup(
-        @Valid @RequestBody SantaGroupCreateRequest santaGroup
+    public ResponseEntity<SantaGroup> createSantaGroup(
+            @Valid @RequestBody SantaGroupCreateRequest santaGroup
     ) {
         return ResponseEntity.ok(map(santaGroupService.create(santaGroup)));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SantaGroup> updateSantaGroup(
-        @PathVariable Long id,
-        @Valid @RequestBody SantaGroupUpdateRequest santaGroup
+            @PathVariable Long id,
+            @Valid @RequestBody SantaGroupUpdateRequest santaGroup
     ) {
         return ResponseEntity.ok(map(santaGroupService.update(id, santaGroup)));
     }
