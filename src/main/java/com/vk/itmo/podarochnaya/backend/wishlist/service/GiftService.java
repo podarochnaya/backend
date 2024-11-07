@@ -10,6 +10,7 @@ import com.vk.itmo.podarochnaya.backend.wishlist.dto.GiftUpdateRequest;
 import com.vk.itmo.podarochnaya.backend.wishlist.dto.GiftWithImageResponse;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftRepository;
+import com.vk.itmo.podarochnaya.backend.wishlist.jpa.GiftStatus;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistEntity;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.GiftMapper;
@@ -47,7 +48,7 @@ public class GiftService {
             .setUrl(giftCreateRequest.getUrl())
             .setPrice(giftCreateRequest.getPrice())
             .setReserved(giftCreateRequest.isReserved())
-            .setStatus(giftCreateRequest.getStatus())
+            .setStatus(Objects.requireNonNullElse(giftCreateRequest.getStatus(), GiftStatus.OPEN))
             .setWishlist(wishlist)
             .setAllowedUsers(new HashSet<>(userService.getByEmails(giftCreateRequest.getAllowedUserEmails())))
             .setPhotoId(photoUrl);

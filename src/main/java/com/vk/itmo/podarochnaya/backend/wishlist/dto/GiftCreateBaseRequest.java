@@ -32,7 +32,6 @@ public class GiftCreateBaseRequest {
 
     private boolean reserved;
 
-    @NotNull(message = "Status is required")
     private GiftStatus status;
 
     private List<@Email String> allowedUserEmails;
