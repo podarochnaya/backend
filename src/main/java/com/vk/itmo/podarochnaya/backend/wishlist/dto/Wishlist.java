@@ -1,5 +1,6 @@
 package com.vk.itmo.podarochnaya.backend.wishlist.dto;
 
+import com.vk.itmo.podarochnaya.backend.user.dto.UserRef;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistStatus;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistVisibility;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public class Wishlist {
     private String description;
     private WishlistStatus status;
     private WishlistVisibility visibility;
-    private Long ownerUserId;
+    private UserRef ownerUser;
     private LocalDateTime createdAt;
-    private List<Long> allowedUserIds;
+    private List<UserRef> allowedUsers;
 }

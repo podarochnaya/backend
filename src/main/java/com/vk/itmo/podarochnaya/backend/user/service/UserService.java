@@ -73,6 +73,19 @@ public class UserService {
         return repository.findAllById(ids);
     }
 
+    public UserEntity getByEmail(String email) {
+        return repository.findByEmail(email)
+            .orElseThrow(() -> new NotFoundException("User not found with email: " + email));
+    }
+
+    public List<UserEntity> getByEmails(Collection<String> emails) {
+        if (CollectionUtils.isEmpty(emails)) {
+            return Collections.emptyList();
+        }
+
+        return repository.getAllByEmails(emails);
+    }
+
     /**
      * Получение пользователя по имени пользователя
      * <p>

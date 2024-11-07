@@ -2,6 +2,8 @@ package com.vk.itmo.podarochnaya.backend.wishlist.dto;
 
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistStatus;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistVisibility;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.Data;
@@ -18,7 +20,9 @@ public class WishlistUpdateRequest {
 
     private WishlistVisibility visibility;
 
-    private Long ownerUserId;
+    @Email
+    @NotNull(message = "Owner user Email is required")
+    private String ownerUserEmail;
 
-    private List<Long> allowedUserIds;
+    private List<@Email String> allowedUserEmails;
 }

@@ -2,6 +2,8 @@ package com.vk.itmo.podarochnaya.backend.wishlist.dto;
 
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistStatus;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistVisibility;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,11 +23,14 @@ public class WishlistCreateRequest {
     @NotNull(message = "Status is required")
     private WishlistStatus status;
 
-    @NotNull(message = "Owner user ID is required")
-    private Long ownerUserId;
+    @Email
+    @NotNull(message = "Owner user Email is required")
+    private String ownerUserEmail;
 
     @NotNull(message = "Visibility is required")
     private WishlistVisibility visibility;
 
-    private List<Long> allowedUserIds;
+    private List<@Email String> allowedUserEmails;
+
+    private List<@Valid GiftCreateEmbeddedRequest> gifts;
 }

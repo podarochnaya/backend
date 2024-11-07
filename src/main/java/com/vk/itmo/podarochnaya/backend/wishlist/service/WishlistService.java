@@ -15,17 +15,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class WishlistService {
     private final WishlistRepository wishlistRepository;
+    private final GiftService giftService;
     private final UserService userService;
     private final WishlistMapper mapper;
 
     public Wishlist createWishlist(WishlistCreateRequest wishlistCreateRequest) {
-        UserEntity user = userService.getById(wishlistCreateRequest.getOwnerUserId());
+        UserEntity user = userService.getByEmail(wishlistCreateRequest.getOwnerUserEmail());
 
         WishlistEntity wishlist = new WishlistEntity();
         wishlist.setTitle(wishlistCreateRequest.getTitle().trim());
@@ -33,9 +35,24 @@ public class WishlistService {
         wishlist.setStatus(wishlistCreateRequest.getStatus());
         wishlist.setOwner(user);
         wishlist.setVisibility(wishlistCreateRequest.getVisibility());
-        wishlist.setAllowedUsers(new HashSet<>(userService.getByIds(wishlistCreateRequest.getAllowedUserIds())));
+        wishlist.setAllowedUsers(new HashSet<>(userService.getByEmails(wishlistCreateRequest.getAllowedUserEmails())));
 
         WishlistEntity wishlistEntity = wishlistRepository.save(wishlist);
+
+        if (!CollectionUtils.isNotEmpty(wishlistCreateRequest.getGifts())) {
+            var wishlistId = wishlistEntity.getId();
+
+            wishlistCreateRequest.getGifts()
+                .forEach(gift -> giftService.createGift(
+                    wishlistId,
+                    gift,
+                    gift.getFile()
+                ));
+
+            wishlistEntity = wishlistRepository.findById(wishlistId)
+                .orElseThrow();
+        }
+
         return mapper.toWishlist(wishlistEntity);
     }
 
@@ -50,8 +67,8 @@ public class WishlistService {
 
         checkOwner(wishlist);
 
-        if (wishlistUpdateRequest.getOwnerUserId() != null) {
-            UserEntity user = userService.getById(wishlistUpdateRequest.getOwnerUserId());
+        if (wishlistUpdateRequest.getOwnerUserEmail() != null) {
+            UserEntity user = userService.getByEmail(wishlistUpdateRequest.getOwnerUserEmail());
 
             wishlist.setOwner(user);
         }
@@ -72,10 +89,10 @@ public class WishlistService {
             wishlist.setVisibility(wishlistUpdateRequest.getVisibility());
         }
 
-        if (wishlistUpdateRequest.getAllowedUserIds() != null) {
+        if (wishlistUpdateRequest.getAllowedUserEmails() != null) {
             wishlist.setAllowedUsers(
                 new HashSet<>(
-                    userService.getByIds(wishlistUpdateRequest.getAllowedUserIds())
+                    userService.getByEmails(wishlistUpdateRequest.getAllowedUserEmails())
                 )
             );
         }
