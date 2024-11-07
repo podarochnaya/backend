@@ -12,6 +12,7 @@ import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistRepository;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistStatus;
 import com.vk.itmo.podarochnaya.backend.wishlist.jpa.WishlistVisibility;
 import com.vk.itmo.podarochnaya.backend.wishlist.mapper.WishlistMapper;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
@@ -57,14 +58,21 @@ public class WishlistService {
                 .forEach(gift -> {
                     var fileBase64 = gift.getFile();
 
+                    var bytes = Optional.ofNullable(fileBase64.getFileContent())
+                        .map(it ->
+                            it.contains(",")
+                                ? Arrays.stream(it.split(",")).reduce((first, second) -> second).orElse(null)
+                                : it
+                        )
+                        .map(it -> Base64.getDecoder().decode(it))
+                        .orElse(EMPTY_BYTES);
+
                     giftService.createGift(
                         wishlistId,
                         gift,
                         new FileDto(
                             fileBase64.getFileName(),
-                            Optional.ofNullable(fileBase64.getFileContentBase64())
-                                .map(it -> Base64.getDecoder().decode(it))
-                                .orElse(EMPTY_BYTES),
+                            bytes,
                             fileBase64.getContentType()
                         )
                     );
