@@ -109,6 +109,7 @@ public class GiftService {
         var currentUser = userService.getAuthenticatedUser();
 
         giftEntity.setReserver(currentUser);
+        giftEntity.setReserved(true);
 
         GiftEntity updatedGift = giftRepository.save(giftEntity);
         return giftMapper.toGift(updatedGift);
